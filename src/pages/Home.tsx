@@ -63,9 +63,9 @@ function EmptyLibraryState() {
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col items-center justify-center py-24 text-center"
     >
-      <BookOpen className="w-16 h-16 text-gold-400 mb-4" />
-      <h2 className="text-2xl font-display text-navy-100">{t('home.noLiterature')}</h2>
-      <p className="mt-2 text-navy-400 max-w-sm">
+      <BookOpen className="w-16 h-16 text-gold-500 mb-4" />
+      <h2 className="text-2xl font-display theme-text-heading">{t('home.noLiterature')}</h2>
+      <p className="mt-2 theme-text-muted max-w-sm">
         {t('home.noLiteratureDesc')}
       </p>
       <Link
@@ -87,8 +87,8 @@ function NoResultsState({ onReset }: { onReset: () => void }) {
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col items-center justify-center py-24 text-center"
     >
-      <Search className="w-16 h-16 text-navy-500 mb-4" />
-      <h2 className="text-2xl font-display theme-text-primary">{t('home.noResults')}</h2>
+      <Search className="w-16 h-16 theme-text-muted mb-4" />
+      <h2 className="text-2xl font-display theme-text-heading">{t('home.noResults')}</h2>
       <p className="mt-2 theme-text-muted max-w-sm">
         {t('home.noResultsDesc')}
       </p>
@@ -162,9 +162,9 @@ export default function Home() {
       {/* Section header with count badge and view toggle */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-display text-navy-100">{t('home.literatureLibrary')}</h2>
+          <h2 className="text-2xl font-display font-bold theme-text-heading">{t('home.literatureLibrary')}</h2>
           {!isLibraryEmpty && (
-            <span className="px-2.5 py-0.5 text-xs font-semibold bg-gold-500/20 text-gold-400 rounded-full">
+            <span className="px-2.5 py-0.5 text-xs font-semibold theme-accent-subtle-bg theme-accent-subtle-text rounded-full">
               {filteredLiteratures.length}
             </span>
           )}
@@ -173,14 +173,14 @@ export default function Home() {
           <div className="flex items-center gap-1 rounded-lg border theme-border-secondary p-0.5">
             <button
               onClick={() => setViewMode('card')}
-              className={`p-1.5 rounded-md transition-colors ${viewMode === 'card' ? 'bg-navy-700 text-gold-400' : 'theme-text-muted hover:text-navy-200'}`}
+              className={`p-1.5 rounded-md transition-colors ${viewMode === 'card' ? 'theme-bg-tertiary text-gold-500' : 'theme-text-muted hover:theme-text-primary'}`}
               title={t('home.viewCard')}
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'bg-navy-700 text-gold-400' : 'theme-text-muted hover:text-navy-200'}`}
+              className={`p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'theme-bg-tertiary text-gold-500' : 'theme-text-muted hover:theme-text-primary'}`}
               title={t('home.viewList')}
             >
               <List className="w-4 h-4" />

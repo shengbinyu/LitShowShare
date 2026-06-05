@@ -135,7 +135,7 @@ export default function FileUploader({
         border-2 border-dashed transition-colors duration-200
         ${isDragOver
           ? 'border-gold-500 bg-gold-500/5'
-          : 'border-navy-600 hover:border-navy-500'
+          : 'theme-border-secondary hover:theme-border-focus'
         }
       `}
     >
@@ -152,10 +152,10 @@ export default function FileUploader({
       {(effectiveState === 'idle' || effectiveState === 'dragover') && (
         <div className="flex flex-col items-center gap-2">
           <Upload
-            className={`w-8 h-8 ${isDragOver ? 'text-gold-500' : 'text-navy-400'}`}
+            className={`w-8 h-8 ${isDragOver ? 'text-gold-500' : 'theme-text-muted'}`}
           />
-          <p className="text-navy-100 font-medium">{label}</p>
-          <p className="text-navy-400 text-sm">{description}</p>
+          <p className="theme-text-heading font-medium">{label}</p>
+          <p className="theme-text-muted text-sm">{description}</p>
         </div>
       )}
 
@@ -163,7 +163,7 @@ export default function FileUploader({
       {effectiveState === 'processing' && (
         <div className="flex flex-col items-center gap-2">
           <FileText className="w-8 h-8 text-gold-500 animate-pulse" />
-          <p className="text-navy-100 font-medium">Processing {filename}...</p>
+          <p className="theme-text-heading font-medium">Processing {filename}...</p>
           {/* Spinning indicator */}
           <div className="mt-1 w-6 h-6 border-2 border-gold-500 border-t-transparent rounded-full animate-spin" />
         </div>
@@ -172,18 +172,18 @@ export default function FileUploader({
       {/* Success state */}
       {effectiveState === 'success' && (
         <div className="flex flex-col items-center gap-2">
-          <CheckCircle2 className="w-8 h-8 text-green-400" />
-          <p className="text-navy-100 font-medium">{filename}</p>
-          <p className="text-navy-400 text-sm">File imported successfully</p>
+          <CheckCircle2 className="w-8 h-8 text-green-500" />
+          <p className="theme-text-heading font-medium">{filename}</p>
+          <p className="theme-text-muted text-sm">File imported successfully</p>
         </div>
       )}
 
       {/* Error state */}
       {effectiveState === 'error' && (
         <div className="flex flex-col items-center gap-2">
-          <AlertCircle className="w-8 h-8 text-red-400" />
-          <p className="text-navy-100 font-medium">Import failed</p>
-          <p className="text-red-400 text-sm">{errorMsg}</p>
+          <AlertCircle className="w-8 h-8 text-red-500" />
+          <p className="theme-text-heading font-medium">Import failed</p>
+          <p className="text-red-500 text-sm">{errorMsg}</p>
         </div>
       )}
     </motion.div>

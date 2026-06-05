@@ -138,22 +138,22 @@ export default function LiteratureDetail() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         <div className="flex items-center justify-between">
-          <div className="h-9 w-24 animate-pulse rounded bg-navy-800" />
+          <div className="h-9 w-24 animate-pulse rounded theme-bg-tertiary" />
           <div className="flex gap-2">
-            <div className="h-9 w-9 animate-pulse rounded-lg bg-navy-800" />
-            <div className="h-9 w-9 animate-pulse rounded-lg bg-navy-800" />
-            <div className="h-9 w-9 animate-pulse rounded-lg bg-navy-800" />
+            <div className="h-9 w-9 animate-pulse rounded-lg theme-bg-tertiary" />
+            <div className="h-9 w-9 animate-pulse rounded-lg theme-bg-tertiary" />
+            <div className="h-9 w-9 animate-pulse rounded-lg theme-bg-tertiary" />
           </div>
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
           <div className="lg:col-span-3 space-y-4">
-            <div className="h-8 w-3/4 animate-pulse rounded bg-navy-800" />
-            <div className="h-5 w-1/2 animate-pulse rounded bg-navy-800" />
-            <div className="h-5 w-2/3 animate-pulse rounded bg-navy-800" />
+            <div className="h-8 w-3/4 animate-pulse rounded theme-bg-tertiary" />
+            <div className="h-5 w-1/2 animate-pulse rounded theme-bg-tertiary" />
+            <div className="h-5 w-2/3 animate-pulse rounded theme-bg-tertiary" />
           </div>
           <div className="lg:col-span-2 space-y-4">
-            <div className="h-6 w-20 animate-pulse rounded bg-navy-800" />
-            <div className="h-20 w-full animate-pulse rounded bg-navy-800" />
+            <div className="h-6 w-20 animate-pulse rounded theme-bg-tertiary" />
+            <div className="h-20 w-full animate-pulse rounded theme-bg-tertiary" />
           </div>
         </div>
       </div>
@@ -169,8 +169,8 @@ export default function LiteratureDetail() {
         transition={{ duration: 0.3 }}
         className="flex flex-col items-center justify-center min-h-[60vh] space-y-4"
       >
-        <span className="font-display text-8xl font-bold text-navy-700">404</span>
-        <p className="font-body text-lg text-navy-400">{t('detail.notFound')}</p>
+        <span className="font-display text-8xl font-bold theme-text-muted">404</span>
+        <p className="font-body text-lg theme-text-muted">{t('detail.notFound')}</p>
         <Link
           to="/"
           className="mt-2 inline-flex items-center gap-2 rounded-lg bg-gold-500 px-5 py-2.5
@@ -198,8 +198,8 @@ export default function LiteratureDetail() {
           <Link
             to="/"
             className="inline-flex items-center gap-2 rounded-lg px-3 py-2
-                       font-body text-sm text-navy-300
-                       hover:bg-navy-800 hover:text-navy-100 transition-colors"
+                       font-body text-sm theme-text-secondary
+                       hover:theme-bg-hover hover:theme-text-primary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             {t('detail.back')}
@@ -216,9 +216,9 @@ export default function LiteratureDetail() {
             </button>
             <button
               onClick={handleCancelEdit}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-navy-600 px-4 py-2
-                         font-body text-sm text-navy-300
-                         hover:bg-navy-800 hover:text-navy-100 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border theme-border-secondary px-4 py-2
+                         font-body text-sm theme-text-secondary
+                         hover:theme-bg-hover hover:theme-text-primary transition-colors"
             >
               <XIcon className="h-4 w-4" />
               {t('detail.cancel') || 'Cancel'}
@@ -227,26 +227,25 @@ export default function LiteratureDetail() {
         </div>
 
         {/* Edit Form */}
-        <div className="space-y-5 rounded-xl border border-navy-700/50 bg-navy-900/40 p-6">
+        <div className="space-y-5 rounded-xl border theme-border-primary theme-bg-card-elevated p-6">
           {/* Title */}
           <div className="space-y-1.5">
-            <label className="font-body text-sm font-medium text-navy-300">
+            <label className="font-body text-sm font-medium theme-text-label">
               {t('import.pdfTitle') || 'Title'} <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               value={editForm.title}
               onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-              className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                         font-body text-sm text-navy-100 placeholder-navy-500
-                         focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                         transition-colors"
+              className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                         font-body text-sm theme-text-primary theme-placeholder
+                         theme-border-focus theme-ring-focus transition-colors"
             />
           </div>
 
           {/* Authors */}
           <div className="space-y-1.5">
-            <label className="font-body text-sm font-medium text-navy-300">
+            <label className="font-body text-sm font-medium theme-text-label">
               {t('import.pdfAuthors') || 'Authors'}
             </label>
             <input
@@ -254,25 +253,24 @@ export default function LiteratureDetail() {
               value={editForm.authors}
               onChange={(e) => setEditForm({ ...editForm, authors: e.target.value })}
               placeholder="Comma separated"
-              className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                         font-body text-sm text-navy-100 placeholder-navy-500
-                         focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                         transition-colors"
+              className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                         font-body text-sm theme-text-primary theme-placeholder
+                         theme-border-focus theme-ring-focus transition-colors"
             />
           </div>
 
           {/* Abstract */}
           <div className="space-y-1.5">
-            <label className="font-body text-sm font-medium text-navy-300">
+            <label className="font-body text-sm font-medium theme-text-label">
               {t('import.pdfAbstract') || 'Abstract'}
             </label>
             <textarea
               value={editForm.abstract}
               onChange={(e) => setEditForm({ ...editForm, abstract: e.target.value })}
               rows={4}
-              className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-3
-                         font-body text-sm text-navy-100 placeholder-navy-500
-                         focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+              className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-3
+                         font-body text-sm theme-text-primary theme-placeholder
+                         theme-border-focus theme-ring-focus
                          resize-y transition-colors"
             />
           </div>
@@ -281,7 +279,7 @@ export default function LiteratureDetail() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Keywords */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('import.pdfKeywords') || 'Keywords'}
               </label>
               <input
@@ -289,16 +287,15 @@ export default function LiteratureDetail() {
                 value={editForm.keywords}
                 onChange={(e) => setEditForm({ ...editForm, keywords: e.target.value })}
                 placeholder="Comma separated"
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
 
             {/* Publish Date */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('detail.published') || 'Publish Date'}
               </label>
               <input
@@ -306,41 +303,38 @@ export default function LiteratureDetail() {
                 value={editForm.publishDate}
                 onChange={(e) => setEditForm({ ...editForm, publishDate: e.target.value })}
                 placeholder="YYYY-MM-DD"
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
 
             {/* Journal */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('detail.journal') || 'Journal'}
               </label>
               <input
                 type="text"
                 value={editForm.journal}
                 onChange={(e) => setEditForm({ ...editForm, journal: e.target.value })}
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
 
             {/* Category */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('import.pdfCategory') || 'Category'}
               </label>
               <select
                 value={editForm.category}
                 onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary
+                           theme-border-focus theme-ring-focus transition-colors"
               >
                 <option value="">{t('import.noCategory') || 'No Category'}</option>
                 {categories.map((cat) => (
@@ -351,95 +345,89 @@ export default function LiteratureDetail() {
 
             {/* DOI */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">DOI</label>
+              <label className="font-body text-sm font-medium theme-text-label">DOI</label>
               <input
                 type="text"
                 value={editForm.doi}
                 onChange={(e) => setEditForm({ ...editForm, doi: e.target.value })}
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
 
             {/* Publisher */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('detail.publisher') || 'Publisher'}
               </label>
               <input
                 type="text"
                 value={editForm.publisher}
                 onChange={(e) => setEditForm({ ...editForm, publisher: e.target.value })}
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
 
             {/* Volume */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('detail.volumeIssue') || 'Volume'}
               </label>
               <input
                 type="text"
                 value={editForm.volume}
                 onChange={(e) => setEditForm({ ...editForm, volume: e.target.value })}
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
 
             {/* Number */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('detail.number') || 'Number'}
               </label>
               <input
                 type="text"
                 value={editForm.number}
                 onChange={(e) => setEditForm({ ...editForm, number: e.target.value })}
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
 
             {/* Pages */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('detail.pages') || 'Pages'}
               </label>
               <input
                 type="text"
                 value={editForm.pages}
                 onChange={(e) => setEditForm({ ...editForm, pages: e.target.value })}
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
 
             {/* Cloud Link */}
             <div className="space-y-1.5">
-              <label className="font-body text-sm font-medium text-navy-300">
+              <label className="font-body text-sm font-medium theme-text-label">
                 {t('detail.cloudLink') || 'Cloud Link'}
               </label>
               <input
                 type="text"
                 value={editForm.cloudLink}
                 onChange={(e) => setEditForm({ ...editForm, cloudLink: e.target.value })}
-                className="w-full rounded-lg border border-navy-700 bg-navy-800 px-4 py-2.5
-                           font-body text-sm text-navy-100 placeholder-navy-500
-                           focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
-                           transition-colors"
+                className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
+                           font-body text-sm theme-text-primary theme-placeholder
+                           theme-border-focus theme-ring-focus transition-colors"
               />
             </div>
           </div>
@@ -461,8 +449,8 @@ export default function LiteratureDetail() {
         <Link
           to="/"
           className="inline-flex items-center gap-2 rounded-lg px-3 py-2
-                     font-body text-sm text-navy-300
-                     hover:bg-navy-800 hover:text-navy-100 transition-colors"
+                     font-body text-sm theme-text-secondary
+                     hover:theme-bg-hover hover:theme-text-primary transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           {t('detail.back')}
@@ -472,24 +460,24 @@ export default function LiteratureDetail() {
           <button
             onClick={handleStartEdit}
             title={t('detail.edit')}
-            className="rounded-lg p-2 text-navy-400
-                       hover:bg-navy-800 hover:text-gold-400 transition-colors"
+            className="rounded-lg p-2 theme-text-muted
+                       hover:theme-bg-hover hover:text-gold-500 transition-colors"
           >
             <Pencil className="h-4 w-4" />
           </button>
           <button
             onClick={handleExport}
             title={t('detail.export')}
-            className="rounded-lg p-2 text-navy-400
-                       hover:bg-navy-800 hover:text-gold-400 transition-colors"
+            className="rounded-lg p-2 theme-text-muted
+                       hover:theme-bg-hover hover:text-gold-500 transition-colors"
           >
             <Download className="h-4 w-4" />
           </button>
           <button
             onClick={handleDelete}
             title={t('detail.delete')}
-            className="rounded-lg p-2 text-navy-400
-                       hover:bg-navy-800 hover:text-red-400 transition-colors"
+            className="rounded-lg p-2 theme-text-muted
+                       hover:theme-bg-hover hover:text-red-500 transition-colors"
           >
             <Trash2 className="h-4 w-4" />
           </button>

@@ -78,10 +78,10 @@ function CategoryDialog({ categories, onClose }: CategoryDialogProps) {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b theme-border-primary">
-          <h3 className="font-display text-lg theme-text-primary">{t('sidebar.editCategory')}</h3>
+          <h3 className="font-display text-lg theme-text-heading">{t('sidebar.editCategory')}</h3>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 theme-text-muted hover:bg-navy-800 hover:text-navy-100 transition-colors"
+            className="rounded-lg p-1.5 theme-text-muted hover:theme-bg-hover hover:theme-text-primary transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -102,7 +102,7 @@ function CategoryDialog({ categories, onClose }: CategoryDialogProps) {
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="flex-1 bg-navy-700 border border-navy-600 rounded px-2 py-1 text-sm theme-text-primary focus:outline-none focus:border-gold-500"
+                      className="flex-1 theme-bg-input border theme-border-secondary rounded px-2 py-1 text-sm theme-text-primary theme-border-focus theme-ring-focus"
                       autoFocus
                     />
                     <div className="flex items-center gap-1">
@@ -119,7 +119,7 @@ function CategoryDialog({ categories, onClose }: CategoryDialogProps) {
                     </div>
                     <button
                       onClick={() => saveEdit(cat.id)}
-                      className="rounded p-1 text-green-400 hover:bg-navy-700 transition-colors"
+                      className="rounded p-1 text-green-500 hover:theme-bg-hover transition-colors"
                     >
                       <Check className="h-4 w-4" />
                     </button>
@@ -133,14 +133,14 @@ function CategoryDialog({ categories, onClose }: CategoryDialogProps) {
                     <span className="flex-1 text-sm theme-text-secondary truncate">{cat.name}</span>
                     <button
                       onClick={() => startEdit(cat)}
-                      className="rounded p-1 theme-text-muted hover:bg-navy-700 hover:text-gold-400 transition-colors"
+                      className="rounded p-1 theme-text-muted hover:theme-bg-hover hover:text-gold-500 transition-colors"
                       title={t('sidebar.editCategory')}
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(cat.id, cat.name)}
-                      className="rounded p-1 theme-text-muted hover:bg-navy-700 hover:text-red-400 transition-colors"
+                      className="rounded p-1 theme-text-muted hover:theme-bg-hover hover:text-red-500 transition-colors"
                       title={t('sidebar.deleteCategory')}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -160,7 +160,7 @@ function CategoryDialog({ categories, onClose }: CategoryDialogProps) {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder={t('sidebar.categoryName')}
-                className="flex-1 theme-bg-input border theme-border-secondary rounded-lg px-3 py-2 text-sm theme-text-primary placeholder-navy-500 focus:outline-none focus:border-gold-500"
+                className="flex-1 theme-bg-input border theme-border-secondary rounded-lg px-3 py-2 text-sm theme-text-primary theme-placeholder theme-border-focus theme-ring-focus"
               />
               <div className="flex items-center gap-1">
                 {COLOR_PRESETS.map((c) => (
@@ -247,7 +247,7 @@ export default function CategoryNav() {
           </h3>
           <button
             onClick={() => setDialogOpen(true)}
-            className="rounded-lg p-1.5 theme-text-muted hover:bg-navy-800 hover:text-gold-400 transition-colors"
+            className="rounded-lg p-1.5 theme-text-muted hover:theme-bg-hover hover:text-gold-500 transition-colors"
             title={t('sidebar.manage')}
           >
             <Settings2 className="h-4 w-4" />
@@ -262,8 +262,8 @@ export default function CategoryNav() {
           onClick={() => setSelectedCategory(null)}
           className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-200 ${
             selectedCategory === null
-              ? 'bg-gold-500/10 text-gold-500 font-medium'
-              : 'theme-text-secondary hover:bg-navy-800/60 hover:text-navy-100'
+              ? 'theme-accent-subtle-bg text-gold-500 font-medium'
+              : 'theme-text-secondary hover:theme-bg-hover hover:theme-text-primary'
           }`}
         >
           <FolderOpen
@@ -288,8 +288,8 @@ export default function CategoryNav() {
           onClick={() => setSelectedCategory(UNCATEGORY_VALUE)}
           className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-200 ${
             selectedCategory === UNCATEGORY_VALUE
-              ? 'bg-gold-500/10 text-gold-500 font-medium'
-              : 'theme-text-secondary hover:bg-navy-800/60 hover:text-navy-100'
+              ? 'theme-accent-subtle-bg text-gold-500 font-medium'
+              : 'theme-text-secondary hover:theme-bg-hover hover:theme-text-primary'
           }`}
         >
           <FolderOpen
@@ -321,8 +321,8 @@ export default function CategoryNav() {
                 onClick={() => setSelectedCategory(category.name)}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-200 ${
                   isActive
-                    ? 'bg-gold-500/10 text-gold-500 font-medium'
-                    : 'theme-text-secondary hover:bg-navy-800/60 hover:text-navy-100'
+                    ? 'theme-accent-subtle-bg text-gold-500 font-medium'
+                    : 'theme-text-secondary hover:theme-bg-hover hover:theme-text-primary'
                 }`}
               >
                 {/* Colored dot indicator */}
@@ -378,8 +378,8 @@ export default function CategoryNav() {
                     onClick={() => setSelectedTag(isActive ? null : tag.id)}
                     className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors duration-200 ${
                       isActive
-                        ? 'bg-gold-500/15 text-gold-500 font-medium ring-1 ring-gold-500/30'
-                        : 'theme-bg-input theme-text-secondary hover:bg-navy-800 hover:text-navy-100'
+                        ? 'theme-accent-subtle-bg text-gold-500 font-medium ring-1 ring-gold-500/30'
+                        : 'theme-bg-input theme-text-secondary hover:theme-bg-hover hover:theme-text-primary'
                     }`}
                   >
                     <span>{tag.name}</span>

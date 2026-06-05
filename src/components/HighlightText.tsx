@@ -24,7 +24,7 @@ interface HighlightTextProps {
 export default function HighlightText({
   text,
   query: propQuery,
-  highlightClass = 'bg-gold-500/30 text-gold-200 rounded-sm px-0.5',
+  highlightClass = 'theme-accent-subtle-bg theme-accent-subtle-text rounded-sm px-0.5',
 }: HighlightTextProps) {
   const storeQuery = useLiteratureStore((s) => s.searchQuery)
   const query = propQuery ?? storeQuery

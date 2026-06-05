@@ -25,7 +25,7 @@ export default function LiteratureListItem({
 
   return (
     <div
-      className="group flex items-center gap-3 px-4 py-3 rounded-lg border theme-bg-card theme-border-primary hover:bg-navy-900/60 hover:border-navy-700 transition-colors"
+      className="group flex items-center gap-3 px-4 py-3 rounded-lg border theme-bg-card theme-border-primary hover:theme-bg-hover theme-border-secondary transition-colors"
     >
       {/* Left color strip */}
       <div
@@ -42,7 +42,7 @@ export default function LiteratureListItem({
       </Link>
 
       {/* Authors */}
-      <span className="hidden md:block truncate max-w-[200px] text-navy-400 text-xs">
+      <span className="hidden md:block truncate max-w-[200px] theme-text-muted text-xs">
         <HighlightText text={authorsText} />
       </span>
 
@@ -58,7 +58,7 @@ export default function LiteratureListItem({
         <span
           className="shrink-0 rounded-full px-2 py-0.5 text-xs"
           style={{
-            backgroundColor: `${stripColor}20`,
+            backgroundColor: `${stripColor}15`,
             color: stripColor,
           }}
         >
@@ -74,7 +74,7 @@ export default function LiteratureListItem({
               href={`/${literature.pdfPath}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-md bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 text-xs text-gold-400 hover:bg-gold-500/20 transition-colors"
+              className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
               onClick={(e) => e.stopPropagation()}
             >
               <FileText className="w-3 h-3" />
@@ -84,7 +84,7 @@ export default function LiteratureListItem({
               href={literature.cloudLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-md bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 text-xs text-gold-400 hover:bg-gold-500/20 transition-colors"
+              className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
               onClick={(e) => e.stopPropagation()}
             >
               <Cloud className="w-3 h-3" />

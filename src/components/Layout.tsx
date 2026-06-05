@@ -36,15 +36,15 @@ export default function Layout() {
           <div className="flex items-center gap-3">
             <button
               onClick={toggleSidebar}
-              className="md:hidden p-1.5 rounded-lg text-navy-300 hover:text-navy-100 hover:bg-navy-800/60 transition-colors"
+              className="md:hidden p-1.5 rounded-lg theme-text-muted hover:theme-bg-hover hover:theme-text-primary transition-colors"
               aria-label="Toggle sidebar"
             >
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
 
             <Link to="/" className="flex items-center gap-2">
-              <BookOpen size={22} className="text-gold-400" />
-              <span className="font-display text-lg font-semibold text-gold-400 tracking-wide">
+              <BookOpen size={22} className="text-gold-500" />
+              <span className="font-display text-lg font-semibold text-gold-500 tracking-wide">
                 {t('app.name')}
               </span>
             </Link>
@@ -55,14 +55,14 @@ export default function Layout() {
             <div className="relative">
               <Search
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-500"
+                className="absolute left-3 top-1/2 -translate-y-1/2 theme-text-muted"
               />
               <input
                 type="text"
                 placeholder={t('nav.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-navy-800/60 border border-navy-700 rounded-lg pl-9 pr-4 py-2 text-sm text-navy-100 placeholder-navy-500 focus:outline-none focus:border-gold-500/50 focus:ring-1 focus:ring-gold-500/30 transition-colors"
+                className="w-full theme-bg-input border theme-border-primary rounded-lg pl-9 pr-4 py-2 text-sm theme-text-primary theme-placeholder focus:outline-none theme-ring-focus theme-border-focus transition-colors"
               />
             </div>
           </div>
@@ -72,9 +72,9 @@ export default function Layout() {
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="flex items-center gap-1.5 rounded-lg border border-navy-700
-                         px-3 py-2 text-xs font-medium text-navy-300
-                         hover:border-navy-500 hover:text-navy-100 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg border theme-border-primary
+                         px-3 py-2 text-xs font-medium theme-text-secondary
+                         hover:theme-border-focus hover:theme-text-primary transition-colors"
               title={theme === 'dark' ? t('nav.lightMode') : t('nav.darkMode')}
             >
               {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
@@ -83,9 +83,9 @@ export default function Layout() {
             {/* Language switch */}
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-1.5 rounded-lg border border-navy-700
-                         px-3 py-2 text-xs font-medium text-navy-300
-                         hover:border-navy-500 hover:text-navy-100 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg border theme-border-primary
+                         px-3 py-2 text-xs font-medium theme-text-secondary
+                         hover:theme-border-focus hover:theme-text-primary transition-colors"
               title={t('nav.language')}
             >
               <Languages size={14} />
@@ -117,7 +117,7 @@ export default function Layout() {
         {/* Sidebar */}
         <aside
           className={`
-            fixed top-16 bottom-0 left-0 z-20 w-64 bg-navy-900/50 border-r overflow-y-auto
+            fixed top-16 bottom-0 left-0 z-20 w-64 border-r overflow-y-auto
             transition-transform duration-300 ease-in-out
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             md:translate-x-0

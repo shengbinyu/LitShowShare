@@ -60,7 +60,7 @@ export default function LiteratureCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: staggerDelay, ease: 'easeOut' }}
-      className="group relative flex border theme-bg-card theme-border-primary rounded-xl overflow-hidden hover:shadow-lg hover:shadow-navy-950/50 hover:-translate-y-0.5 transition-all duration-300"
+      className="group relative flex border theme-bg-card theme-border-primary rounded-xl overflow-hidden theme-shadow-card hover:-translate-y-0.5 transition-all duration-300 dark:hover:shadow-lg dark:hover:shadow-navy-950/50 theme-shadow-card-hover"
     >
       {/* Left colored strip */}
       <div
@@ -74,7 +74,7 @@ export default function LiteratureCard({
         {/* Title */}
         <Link
           to={`/literature/${literature.id}`}
-          className="block font-display text-lg text-navy-50 hover:text-gold-500 transition-colors leading-snug"
+          className="block font-display text-lg font-semibold theme-text-heading hover:text-gold-500 transition-colors leading-snug"
         >
           <BookOpen className="inline-block w-4 h-4 mr-1.5 opacity-50 align-text-bottom" />
           <HighlightText text={literature.title} />
@@ -118,13 +118,13 @@ export default function LiteratureCard({
         {/* Tags */}
         {literature.tagIds.length > 0 && (
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <Hash className="w-3 h-3 text-gold-400/60 shrink-0" />
+            <Hash className="w-3 h-3 theme-accent-subtle-text shrink-0 opacity-60" />
             {tags
               .filter((tag) => literature.tagIds.includes(tag.id))
               .map((tag) => (
                 <span
                   key={tag.id}
-                  className="rounded-full bg-gold-500/10 text-gold-400 border border-gold-500/20 px-2 py-0.5 text-xs"
+                  className="rounded-full theme-accent-subtle-bg theme-accent-subtle-text border theme-accent-subtle-border px-2 py-0.5 text-xs"
                 >
                   {tag.name}
                 </span>
@@ -138,7 +138,7 @@ export default function LiteratureCard({
             href={`https://doi.org/${literature.doi}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 inline-flex items-center gap-1 text-xs text-gold-500/80 hover:text-gold-500 transition-colors"
+            className="mt-2 inline-flex items-center gap-1 text-xs theme-text-link hover:text-gold-500 transition-colors"
           >
             <ExternalLink className="w-3 h-3" />
             DOI: {literature.doi}
@@ -153,7 +153,7 @@ export default function LiteratureCard({
                 href={`/${literature.pdfPath}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md bg-gold-500/10 border border-gold-500/20 px-2.5 py-1 text-xs text-gold-400 hover:bg-gold-500/20 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2.5 py-1 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
               >
                 <FileText className="w-3 h-3" />
                 {t('card.openPdf')}
@@ -163,7 +163,7 @@ export default function LiteratureCard({
                 href={literature.cloudLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md bg-gold-500/10 border border-gold-500/20 px-2.5 py-1 text-xs text-gold-400 hover:bg-gold-500/20 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2.5 py-1 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
               >
                 <Cloud className="w-3 h-3" />
                 {t('card.openCloudLink')}

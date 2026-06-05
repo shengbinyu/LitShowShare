@@ -100,20 +100,20 @@ export default function StatsOverview() {
         <motion.div
           key={stat.label}
           variants={cardVariants}
-          className="bg-navy-900/60 border border-navy-800 rounded-lg p-4 flex flex-col gap-3"
+          className="theme-bg-card border theme-border-primary rounded-lg p-4 flex flex-col gap-3 theme-shadow-card"
         >
           {/* Icon in gold circle */}
-          <div className="flex items-center justify-center h-9 w-9 rounded-full bg-gold-400/15 text-gold-400">
+          <div className="flex items-center justify-center h-9 w-9 rounded-full theme-accent-subtle-bg text-gold-500">
             {stat.icon}
           </div>
 
           {/* Numeric value */}
-          <div className="text-2xl font-display text-gold-400 leading-tight">
+          <div className="text-2xl font-display text-gold-500 leading-tight">
             {stat.value}
           </div>
 
           {/* Label */}
-          <div className="text-navy-300 text-sm">{stat.label}</div>
+          <div className="theme-text-muted text-sm">{stat.label}</div>
         </motion.div>
       ))}
     </motion.div>

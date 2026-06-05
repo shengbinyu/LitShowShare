@@ -255,7 +255,7 @@ export default function Import() {
             onClick={handleReset}
             className="flex items-center gap-2 rounded-lg border theme-border-secondary
                        px-5 py-2.5 font-body text-sm theme-text-secondary
-                       hover:border-navy-600 hover:text-navy-100 transition-colors"
+                       hover:theme-border-focus hover:theme-text-primary transition-colors"
           >
             <RotateCcw className="h-4 w-4" />
             {t('import.importMore')}
@@ -289,8 +289,8 @@ export default function Import() {
             className={`
               flex items-center gap-2 pb-3 text-sm font-body font-medium transition-colors border-b-2 -mb-px
               ${activeTab === tab.key
-                ? 'text-gold-400 border-gold-400'
-                : 'theme-text-muted border-transparent hover:text-navy-200 hover:border-navy-600'
+                ? 'text-gold-500 border-gold-500'
+                : 'theme-text-muted border-transparent hover:theme-text-primary hover:theme-border-focus'
               }
             `}
           >
@@ -344,8 +344,8 @@ export default function Import() {
                     : '@article{key,\n  author = {Smith, John},\n  title = {Title},\n  year = {2024}\n}'}
                   rows={6}
                   className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-3
-                             font-mono text-sm theme-text-primary placeholder-navy-500
-                             focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+                             font-mono text-sm theme-text-primary theme-placeholder
+                             theme-border-focus theme-ring-focus
                              resize-y transition-colors"
                 />
                 <button
@@ -353,7 +353,7 @@ export default function Import() {
                   disabled={!pasteText.trim()}
                   className="flex items-center gap-2 rounded-lg theme-bg-tertiary
                              px-4 py-2 font-body text-sm font-medium theme-text-secondary
-                             hover:bg-navy-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                             hover:theme-bg-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <ClipboardPaste className="h-4 w-4" />
                   {t('import.parse')}
@@ -432,7 +432,7 @@ export default function Import() {
                             type="checkbox"
                             checked={importPdfEnabled}
                             onChange={(e) => setImportPdfEnabled(e.target.checked)}
-                            className="rounded border-navy-600 bg-navy-800 text-gold-500 focus:ring-gold-500/50"
+                            className="rounded theme-border-secondary theme-bg-input text-gold-500 focus:ring-gold-500/50"
                           />
                           <span className="font-body text-sm theme-text-secondary">
                             {t('import.attachPdf')}
@@ -455,7 +455,7 @@ export default function Import() {
                               border-2 border-dashed transition-colors duration-200
                               ${importPdfFile
                                 ? 'border-green-500/50 bg-green-950/20'
-                                : 'border-navy-600 hover:border-navy-500'
+                                : 'theme-border-secondary hover:theme-border-secondary'
                               }
                             `}
                           >
@@ -491,7 +491,7 @@ export default function Import() {
                             type="checkbox"
                             checked={importCloudLinkEnabled}
                             onChange={(e) => setImportCloudLinkEnabled(e.target.checked)}
-                            className="rounded border-navy-600 bg-navy-800 text-gold-500 focus:ring-gold-500/50"
+                            className="rounded theme-border-secondary theme-bg-input text-gold-500 focus:ring-gold-500/50"
                           />
                           <span className="font-body text-sm theme-text-secondary">
                             {t('import.attachCloudLink')}
@@ -506,8 +506,8 @@ export default function Import() {
                               onChange={(e) => setImportCloudLinkValue(e.target.value)}
                               placeholder={t('import.cloudLinkPlaceholder')}
                               className="w-full rounded-lg border theme-border-secondary theme-bg-input pl-10 pr-4 py-2
-                                       font-body text-sm theme-text-primary placeholder-navy-500
-                                       focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+                                       font-body text-sm theme-text-primary theme-placeholder
+                                       theme-border-focus theme-ring-focus
                                        transition-colors"
                             />
                           </div>
@@ -563,7 +563,7 @@ export default function Import() {
                     border-2 border-dashed transition-colors duration-200
                     ${pdfFile
                       ? 'border-green-500/50 bg-green-950/20'
-                      : 'border-navy-600 hover:border-navy-500'
+                      : 'theme-border-secondary hover:theme-border-secondary'
                     }
                   `}
                 >
@@ -614,8 +614,8 @@ export default function Import() {
                       onChange={(e) => setPdfTitle(e.target.value)}
                       placeholder={t('import.titlePlaceholder')}
                       className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
-                                 font-body text-sm theme-text-primary placeholder-navy-500
-                                 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+                                 font-body text-sm theme-text-primary theme-placeholder
+                                 theme-border-focus theme-ring-focus
                                  transition-colors"
                     />
                   </div>
@@ -631,8 +631,8 @@ export default function Import() {
                       onChange={(e) => setPdfAuthors(e.target.value)}
                       placeholder={t('import.authorsPlaceholder')}
                       className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
-                                 font-body text-sm theme-text-primary placeholder-navy-500
-                                 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+                                 font-body text-sm theme-text-primary theme-placeholder
+                                 theme-border-focus theme-ring-focus
                                  transition-colors"
                     />
                   </div>
@@ -648,8 +648,8 @@ export default function Import() {
                       placeholder={t('import.abstractPlaceholder')}
                       rows={4}
                       className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-3
-                                 font-body text-sm theme-text-primary placeholder-navy-500
-                                 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+                                 font-body text-sm theme-text-primary theme-placeholder
+                                 theme-border-focus theme-ring-focus
                                  resize-y transition-colors"
                     />
                   </div>
@@ -665,8 +665,8 @@ export default function Import() {
                       onChange={(e) => setPdfKeywords(e.target.value)}
                       placeholder={t('import.keywordsPlaceholder')}
                       className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
-                                 font-body text-sm theme-text-primary placeholder-navy-500
-                                 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+                                 font-body text-sm theme-text-primary theme-placeholder
+                                 theme-border-focus theme-ring-focus
                                  transition-colors"
                     />
                   </div>
@@ -681,7 +681,7 @@ export default function Import() {
                       onChange={(e) => setPdfCategory(e.target.value)}
                       className="w-full rounded-lg border theme-border-secondary theme-bg-input px-4 py-2.5
                                  font-body text-sm theme-text-primary
-                                 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+                                 theme-border-focus theme-ring-focus
                                  transition-colors"
                     >
                       <option value="">{t('import.noCategory')}</option>
@@ -706,8 +706,8 @@ export default function Import() {
                         onChange={(e) => setPdfCloudLink(e.target.value)}
                         placeholder={t('import.cloudLinkPlaceholder')}
                         className="w-full rounded-lg border theme-border-secondary theme-bg-input pl-10 pr-4 py-2.5
-                                   font-body text-sm theme-text-primary placeholder-navy-500
-                                   focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500
+                                   font-body text-sm theme-text-primary theme-placeholder
+                                   theme-border-focus theme-ring-focus
                                    transition-colors"
                       />
                     </div>

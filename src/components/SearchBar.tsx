@@ -56,21 +56,21 @@ export default function SearchBar() {
       {/* Search input wrapper */}
       <div className="relative flex-1">
         {/* Search icon */}
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-400 pointer-events-none" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 theme-text-muted pointer-events-none" />
 
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search literature..."
-          className="w-full bg-navy-900/80 border border-navy-700 rounded-lg pl-10 pr-9 py-2 text-navy-100 placeholder-navy-400 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-colors"
+          className="w-full theme-bg-input border theme-border-primary rounded-lg pl-10 pr-9 py-2 theme-text-primary theme-placeholder text-sm focus:outline-none theme-ring-focus theme-border-focus transition-colors"
         />
 
         {/* Clear button — only visible when there is a query */}
         {searchQuery && (
           <button
             onClick={() => setSearchQuery('')}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-navy-400 hover:text-navy-200 transition-colors"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 theme-text-muted hover:theme-text-primary transition-colors"
             aria-label="Clear search"
           >
             <X className="w-4 h-4" />
@@ -82,7 +82,7 @@ export default function SearchBar() {
       <button
         onClick={handleSortToggle}
         title={sortLabel}
-        className="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg bg-navy-900/80 border border-navy-700 text-navy-300 hover:text-gold-500 hover:border-gold-500/50 transition-colors"
+        className="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg theme-bg-input border theme-border-primary theme-text-secondary hover:text-gold-500 hover:theme-border-focus transition-colors"
         aria-label={`Sort: ${sortLabel}`}
       >
         <ArrowUpDown className="w-4 h-4" />

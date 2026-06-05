@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import type { Literature, ExternalLink as ExternalLinkType, Tag } from '@/utils/db'
 import { Calendar, User, BookOpen, Hash, ExternalLink, FileText, Award, Copy, Quote, Download, Eye, Cloud, X } from 'lucide-react'
 import { motion } from 'motion/react'
@@ -137,18 +137,18 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
       className="space-y-6"
     >
       {/* ---- Title Section (full width) ---- */}
-      <div className="bg-gradient-to-br from-navy-800/50 to-navy-900/50 border border-navy-700/50 rounded-xl p-6">
-        <h1 className="font-display text-2xl md:text-3xl text-navy-50 leading-relaxed tracking-tight">
+      <div className="theme-bg-hero border theme-border-primary rounded-xl p-6 theme-shadow-card">
+        <h1 className="font-display text-2xl md:text-3xl font-bold theme-text-heading leading-relaxed tracking-tight">
           {literature.title}
         </h1>
 
         {/* Authors */}
         {literature.authors.length > 0 && (
           <div className="mt-4 flex items-start gap-2">
-            <User className="mt-0.5 h-4 w-4 shrink-0 text-gold-400" />
+            <User className="mt-0.5 h-4 w-4 shrink-0 text-gold-500" />
             <div className="flex flex-wrap gap-1">
               {literature.authors.map((author, i) => (
-                <span key={i} className="font-body text-sm text-navy-200">
+                <span key={i} className="font-body text-sm theme-text-secondary">
                   {author}{i < literature.authors.length - 1 ? ',' : ''}
                 </span>
               ))}
@@ -157,7 +157,7 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
         )}
 
         {/* Quick info row */}
-        <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-navy-400">
+        <div className="mt-4 flex flex-wrap items-center gap-4 text-xs theme-text-muted">
           {literature.publishDate && (
             <span className="flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
@@ -182,18 +182,18 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
         {/* ---- Left column: publication details ---- */}
         <div className="lg:col-span-3 space-y-4">
           {/* Card: Publication Details */}
-          <div className="bg-navy-900/40 border border-navy-800/60 rounded-xl p-5 space-y-4">
-            <h3 className="font-display text-sm uppercase tracking-wider text-navy-400">
+          <div className="theme-bg-card-elevated border theme-border-primary rounded-xl p-5 space-y-4">
+            <h3 className="font-display text-sm uppercase tracking-wider theme-text-label">
               {t('detail.publicationDetails')}
             </h3>
 
             {/* Journal / Publisher */}
             {(literature.journal || literature.publisher) && (
               <div className="flex items-start gap-3">
-                <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-navy-400" />
+                <BookOpen className="mt-0.5 h-4 w-4 shrink-0 theme-text-muted" />
                 <div>
-                  <p className="font-body text-xs text-navy-500">{t('detail.journal')}</p>
-                  <p className="font-body text-sm text-navy-200">
+                  <p className="font-body text-xs theme-text-label">{t('detail.journal')}</p>
+                  <p className="font-body text-sm theme-text-secondary">
                     {literature.journal || literature.publisher}
                   </p>
                 </div>
@@ -203,10 +203,10 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
             {/* Publish date */}
             {literature.publishDate && (
               <div className="flex items-start gap-3">
-                <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-navy-400" />
+                <Calendar className="mt-0.5 h-4 w-4 shrink-0 theme-text-muted" />
                 <div>
-                  <p className="font-body text-xs text-navy-500">{t('detail.published')}</p>
-                  <p className="font-body text-sm text-navy-200">{literature.publishDate}</p>
+                  <p className="font-body text-xs theme-text-label">{t('detail.published')}</p>
+                  <p className="font-body text-sm theme-text-secondary">{literature.publishDate}</p>
                 </div>
               </div>
             )}
@@ -214,10 +214,10 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
             {/* Volume / Number / Pages */}
             {volDisplay && (
               <div className="flex items-start gap-3">
-                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-navy-400" />
+                <FileText className="mt-0.5 h-4 w-4 shrink-0 theme-text-muted" />
                 <div>
-                  <p className="font-body text-xs text-navy-500">{t('detail.volumeIssue')}</p>
-                  <p className="font-body text-sm text-navy-200">{volDisplay}</p>
+                  <p className="font-body text-xs theme-text-label">{t('detail.volumeIssue')}</p>
+                  <p className="font-body text-sm theme-text-secondary">{volDisplay}</p>
                 </div>
               </div>
             )}
@@ -225,15 +225,15 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
             {/* DOI */}
             {literature.doi && (
               <div className="flex items-start gap-3">
-                <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-gold-400" />
+                <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-gold-500" />
                 <div className="min-w-0 flex-1">
-                  <p className="font-body text-xs text-navy-500">DOI</p>
+                  <p className="font-body text-xs theme-text-label">DOI</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <a
                       href={doiUrl(literature.doi)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-body text-sm text-gold-400 hover:text-gold-300
+                      className="font-body text-sm theme-text-link hover:text-gold-500
                                  underline underline-offset-2 transition-colors truncate max-w-[70%]"
                     >
                       {literature.doi}
@@ -241,11 +241,11 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
                     <button
                       onClick={handleCopyDoi}
                       title="Copy DOI"
-                      className="shrink-0 rounded p-1 text-navy-500
-                                 hover:bg-navy-800 hover:text-gold-400 transition-colors"
+                      className="shrink-0 rounded p-1 theme-text-muted
+                                 hover:theme-bg-hover hover:text-gold-500 transition-colors"
                     >
                       {doiCopied ? (
-                        <span className="font-body text-xs text-green-400">{t('detail.copied')}</span>
+                        <span className="font-body text-xs text-green-500">{t('detail.copied')}</span>
                       ) : (
                         <Copy className="h-3.5 w-3.5" />
                       )}
@@ -260,18 +260,18 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
         {/* ---- Right column: source + keywords + tags ---- */}
         <div className="lg:col-span-2 space-y-4">
           {/* Card: Source */}
-          <div className="bg-navy-900/40 border border-navy-800/60 rounded-xl p-5 space-y-3">
-            <h3 className="font-display text-sm uppercase tracking-wider text-navy-400">
+          <div className="theme-bg-card-elevated border theme-border-primary rounded-xl p-5 space-y-3">
+            <h3 className="font-display text-sm uppercase tracking-wider theme-text-label">
               {t('detail.source')}
             </h3>
             <div className="flex items-center gap-2">
-              <span className="inline-block rounded-md bg-navy-800 px-3 py-1.5
-                               font-body text-xs font-medium text-navy-200">
+              <span className="inline-block rounded-md theme-bg-tertiary px-3 py-1.5
+                               font-body text-xs font-medium theme-text-secondary">
                 {formatBadge(literature.sourceFormat)}
               </span>
               {literature.category && (
-                <span className="inline-block rounded-md bg-navy-800 px-3 py-1.5
-                                 font-body text-xs font-medium text-navy-200">
+                <span className="inline-block rounded-md theme-bg-tertiary px-3 py-1.5
+                                 font-body text-xs font-medium theme-text-secondary">
                   {literature.category.replace('bibtex-', '')}
                 </span>
               )}
@@ -281,8 +281,8 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
             {literature.keywords.length > 0 && (
               <div className="pt-2 space-y-2">
                 <div className="flex items-center gap-2">
-                  <Hash className="h-3.5 w-3.5 text-navy-400" />
-                  <span className="font-body text-xs uppercase tracking-wider text-navy-400">
+                  <Hash className="h-3.5 w-3.5 theme-text-muted" />
+                  <span className="font-body text-xs uppercase tracking-wider theme-text-label">
                     {t('detail.keywords')}
                   </span>
                 </div>
@@ -290,8 +290,8 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
                   {literature.keywords.map((kw) => (
                     <span
                       key={kw}
-                      className="rounded-full bg-navy-800/80 px-2.5 py-1 font-body text-xs text-navy-200
-                                 border border-navy-700/50"
+                      className="rounded-full theme-bg-tertiary px-2.5 py-1 font-body text-xs theme-text-secondary
+                                 border theme-border-primary"
                     >
                       {kw}
                     </span>
@@ -302,10 +302,10 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
           </div>
 
           {/* Card: Tags */}
-          <div className="bg-navy-900/40 border border-navy-800/60 rounded-xl p-5 space-y-3">
+          <div className="theme-bg-card-elevated border theme-border-primary rounded-xl p-5 space-y-3">
             <div className="flex items-center gap-2">
-              <Hash className="h-3.5 w-3.5 text-gold-400" />
-              <h3 className="font-display text-sm uppercase tracking-wider text-navy-400">
+              <Hash className="h-3.5 w-3.5 text-gold-500" />
+              <h3 className="font-display text-sm uppercase tracking-wider theme-text-label">
                 {t('detail.tags')}
               </h3>
             </div>
@@ -316,13 +316,13 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
                 {literatureTags.map((tag) => (
                   <span
                     key={tag.id}
-                    className="inline-flex items-center gap-1 rounded-full bg-gold-500/10 text-gold-400
-                               border border-gold-500/20 px-2.5 py-1 font-body text-xs"
+                    className="inline-flex items-center gap-1 rounded-full theme-accent-subtle-bg theme-accent-subtle-text
+                               border theme-accent-subtle-border px-2.5 py-1 font-body text-xs"
                   >
                     {tag.name}
                     <button
                       onClick={() => handleRemoveTag(tag.id)}
-                      className="ml-0.5 text-gold-400/50 hover:text-red-400 transition-colors"
+                      className="ml-0.5 opacity-50 hover:opacity-100 hover:text-red-500 transition-colors"
                       title={t('detail.addTag')}
                     >
                       <X className="h-3 w-3" />
@@ -345,18 +345,18 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
                 onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                 onKeyDown={handleTagInputKeyDown}
                 placeholder={t('detail.addTagPlaceholder')}
-                className="w-full bg-navy-800 border border-navy-700 rounded-lg px-3 py-2 text-sm
-                           text-navy-100 placeholder-navy-500 focus:outline-none focus:border-gold-500"
+                className="w-full theme-bg-input border theme-border-primary rounded-lg px-3 py-2 text-sm
+                           theme-text-primary theme-placeholder theme-border-focus theme-ring-focus transition-colors"
               />
 
               {/* Autocomplete suggestions */}
               {showTagSuggestions && tagSuggestions.length > 0 && (
-                <div className="absolute z-10 top-full mt-1 w-full bg-navy-800 border border-navy-700 rounded-lg shadow-lg overflow-hidden">
+                <div className="absolute z-10 top-full mt-1 w-full theme-bg-card border theme-border-primary rounded-lg shadow-lg overflow-hidden">
                   {tagSuggestions.slice(0, 5).map((tag) => (
                     <button
                       key={tag.id}
                       onMouseDown={() => handleAddTag(tag.id)}
-                      className="w-full text-left px-3 py-2 text-sm text-navy-200 hover:bg-navy-700 transition-colors"
+                      className="w-full text-left px-3 py-2 text-sm theme-text-secondary hover:theme-bg-hover transition-colors"
                     >
                       {tag.name}
                     </button>
@@ -371,7 +371,7 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
             ) && (
               <button
                 onClick={handleCreateAndAddTag}
-                className="text-xs text-gold-400 hover:text-gold-300 transition-colors"
+                className="text-xs theme-accent-subtle-text hover:text-gold-500 transition-colors"
               >
                 + {t('detail.addTag')}: &quot;{tagInput.trim()}&quot;
               </button>
@@ -386,25 +386,25 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className="bg-gradient-to-br from-navy-800/30 to-navy-900/30 border border-navy-700/50 rounded-xl overflow-hidden"
+          className="theme-bg-card-elevated border theme-border-primary rounded-xl overflow-hidden"
         >
           {/* Abstract header */}
           <div className="flex items-center gap-2 px-5 pt-4 pb-2">
-            <Quote className="h-4 w-4 text-gold-400" />
-            <h3 className="font-display text-base text-navy-100">{t('detail.abstract')}</h3>
+            <Quote className="h-4 w-4 text-gold-500" />
+            <h3 className="font-display text-base font-medium theme-text-heading">{t('detail.abstract')}</h3>
           </div>
 
           {/* Abstract content */}
           <div className="px-5 pb-4">
             <div className="relative">
-              <p className={`font-body text-sm leading-relaxed text-navy-200 ${!abstractExpanded && isAbstractLong ? 'line-clamp-6' : ''}`}
+              <p className={`font-body text-sm leading-relaxed theme-text-secondary ${!abstractExpanded && isAbstractLong ? 'line-clamp-6' : ''}`}
                  style={{ whiteSpace: 'pre-line' }}>
                 {literature.abstract}
               </p>
 
               {/* Gradient fade for truncated abstract */}
               {!abstractExpanded && isAbstractLong && (
-                <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-navy-900/80 to-transparent" />
+                <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-[var(--bg-card-elevated)] to-transparent" />
               )}
             </div>
 
@@ -412,7 +412,7 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
             {isAbstractLong && (
               <button
                 onClick={() => setAbstractExpanded(!abstractExpanded)}
-                className="mt-2 text-xs text-gold-400 hover:text-gold-300 transition-colors
+                className="mt-2 text-xs theme-accent-subtle-text hover:text-gold-500 transition-colors
                            font-medium focus:outline-none"
               >
                 {abstractExpanded ? t('detail.showLess') : t('detail.readFull')}
@@ -428,17 +428,17 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.12 }}
-          className="bg-navy-900/40 border border-navy-800/60 rounded-xl p-5"
+          className="theme-bg-card-elevated border theme-border-primary rounded-xl p-5"
         >
           <div className="flex items-center gap-2 mb-3">
-            <FileText className="h-4 w-4 text-gold-400" />
-            <h3 className="font-display text-sm uppercase tracking-wider text-navy-400">
+            <FileText className="h-4 w-4 text-gold-500" />
+            <h3 className="font-display text-sm uppercase tracking-wider theme-text-label">
               {t('detail.pdfFile')}
             </h3>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex-1 min-w-0">
-              <p className="font-body text-sm text-navy-200 truncate">
+              <p className="font-body text-sm theme-text-secondary truncate">
                 {literature.pdfFileName || 'document.pdf'}
               </p>
             </div>
@@ -447,9 +447,9 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
                 href={getPdfUrl(literature.pdfPath)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-navy-800 px-3 py-1.5
-                           font-body text-xs font-medium text-navy-200
-                           hover:bg-navy-700 hover:text-gold-400 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg theme-bg-tertiary px-3 py-1.5
+                           font-body text-xs font-medium theme-text-secondary
+                           hover:theme-bg-hover hover:text-gold-500 transition-colors"
               >
                 <Eye className="h-3.5 w-3.5" />
                 {t('detail.previewPdf')}
@@ -475,11 +475,11 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.13 }}
-          className="bg-navy-900/40 border border-navy-800/60 rounded-xl p-5"
+          className="theme-bg-card-elevated border theme-border-primary rounded-xl p-5"
         >
           <div className="flex items-center gap-2 mb-3">
-            <Cloud className="h-4 w-4 text-gold-400" />
-            <h3 className="font-display text-sm uppercase tracking-wider text-navy-400">
+            <Cloud className="h-4 w-4 text-gold-500" />
+            <h3 className="font-display text-sm uppercase tracking-wider theme-text-label">
               {t('detail.cloudLink')}
             </h3>
           </div>
@@ -487,7 +487,7 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
             href={literature.cloudLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-body text-sm text-gold-400 hover:text-gold-300 underline underline-offset-2 transition-colors break-all"
+            className="font-body text-sm theme-text-link hover:text-gold-500 underline underline-offset-2 transition-colors break-all"
           >
             {literature.cloudLink}
           </a>
@@ -500,27 +500,27 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.15 }}
-          className="bg-navy-900/40 border border-navy-800/60 rounded-xl p-5"
+          className="theme-bg-card-elevated border theme-border-primary rounded-xl p-5"
         >
-          <h3 className="font-display text-sm uppercase tracking-wider text-navy-400 mb-3">
+          <h3 className="font-display text-sm uppercase tracking-wider theme-text-label mb-3">
             {t('detail.externalLinks')} ({externalLinks.length})
           </h3>
-          <ul className="divide-y divide-navy-800">
+          <ul className="divide-y theme-border-primary">
             {externalLinks.map((link) => (
               <li key={link.id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-                <ExternalLink className="h-4 w-4 shrink-0 text-navy-400" />
+                <ExternalLink className="h-4 w-4 shrink-0 theme-text-muted" />
                 <a
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="min-w-0 flex-1 truncate font-body text-sm
-                             text-navy-200 hover:text-gold-400 transition-colors"
+                             theme-text-secondary hover:text-gold-500 transition-colors"
                 >
                   {link.label || link.url}
                 </a>
                 <span
                   className={`h-2 w-2 shrink-0 rounded-full ${
-                    link.isValid ? 'bg-green-400' : 'bg-red-400'
+                    link.isValid ? 'bg-green-500' : 'bg-red-500'
                   }`}
                   title={link.isValid ? 'Valid' : 'Invalid'}
                 />
