@@ -1,0 +1,97 @@
+import { Link } from 'react-router-dom'
+import { FileText, Cloud } from 'lucide-react'
+import type { Literature, Category } from '@/utils/db'
+import HighlightText from '@/components/HighlightText'
+
+interface LiteratureListItemProps {
+  literature: Literature
+  category?: Category
+}
+
+export default function LiteratureListItem({
+  literature,
+  category,
+}: LiteratureListItemProps) {
+
+  const stripColor = category?.color ?? '#c9a84c'
+
+  const year = literature.publishDate
+    ? new Date(literature.publishDate).getFullYear()
+    : ''
+
+  const authorsText = literature.authors.length
+    ? literature.authors.join(', ')
+    : 'Unknown Author'
+
+  return (
+    <div
+      className="group flex items-center gap-3 px-4 py-3 rounded-lg border theme-bg-card theme-border-primary hover:bg-navy-900/60 hover:border-navy-700 transition-colors"
+    >
+      {/* Left color strip */}
+      <div
+        className="w-1 h-8 shrink-0 rounded-full"
+        style={{ backgroundColor: stripColor }}
+      />
+
+      {/* Title */}
+      <Link
+        to={`/literature/${literature.id}`}
+        className="min-w-0 flex-1 truncate font-body text-sm font-medium theme-text-primary hover:text-gold-500 transition-colors"
+      >
+        <HighlightText text={literature.title} />
+      </Link>
+
+      {/* Authors */}
+      <span className="hidden md:block truncate max-w-[200px] text-navy-400 text-xs">
+        <HighlightText text={authorsText} />
+      </span>
+
+      {/* Year */}
+      {year && (
+        <span className="shrink-0 theme-text-muted text-xs tabular-nums">
+          {year}
+        </span>
+      )}
+
+      {/* Category badge */}
+      {literature.category && (
+        <span
+          className="shrink-0 rounded-full px-2 py-0.5 text-xs"
+          style={{
+            backgroundColor: `${stripColor}20`,
+            color: stripColor,
+          }}
+        >
+          {literature.category}
+        </span>
+      )}
+
+      {/* PDF / Cloud Link button */}
+      {(literature.pdfPath || literature.cloudLink) && (
+        <div className="shrink-0">
+          {literature.pdfPath ? (
+            <a
+              href={`/${literature.pdfPath}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-md bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 text-xs text-gold-400 hover:bg-gold-500/20 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <FileText className="w-3 h-3" />
+            </a>
+          ) : (
+            <a
+              href={literature.cloudLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-md bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 text-xs text-gold-400 hover:bg-gold-500/20 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Cloud className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}

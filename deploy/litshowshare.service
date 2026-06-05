@@ -1,0 +1,17 @@
+[Unit]
+Description=LitShowShare Backend Server
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/litshowshare
+ExecStart=/usr/bin/node /opt/litshowshare/backend/node_modules/.bin/tsx /opt/litshowshare/backend/src/index.ts
+Restart=on-failure
+RestartSec=10
+Environment=NODE_ENV=production
+Environment=PORT=3001
+Environment=HOST=127.0.0.1
+
+[Install]
+WantedBy=multi-user.target

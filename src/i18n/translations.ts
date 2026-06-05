@@ -1,0 +1,289 @@
+// ============================================================
+// Translation definitions
+// ============================================================
+
+export type Language = 'en' | 'zh'
+
+export const translations: Record<Language, Record<string, string>> = {
+  en: {
+    // App
+    'app.name': 'LitShowShare',
+
+    // Layout / Navbar
+    'nav.import': 'Import',
+    'nav.search': 'Search literature...',
+    'nav.language': 'Language',
+
+    // Sidebar
+    'sidebar.categories': 'Categories',
+    'sidebar.all': 'All Literature',
+    'sidebar.categoriesInUse': '{active} of {total} categories in use',
+    'sidebar.manage': 'Manage categories',
+    'sidebar.addNew': 'Add New Category',
+    'sidebar.categoryName': 'Category name',
+    'sidebar.editCategory': 'Edit category',
+    'sidebar.deleteCategory': 'Delete category',
+    'sidebar.deleteConfirm': 'Delete category "{name}"?\nLiterature entries in this category will not be deleted.',
+    'sidebar.uncategorized': 'Uncategorized',
+    'sidebar.tags': 'Tags',
+    'sidebar.noTags': 'No tags yet',
+
+    // Home / Library
+    'home.literatureLibrary': 'Literature Library',
+    'home.noLiterature': 'No literature yet',
+    'home.noLiteratureDesc': 'Import your first literature to get started',
+    'home.noResults': 'No matching literature found',
+    'home.noResultsDesc': 'Try adjusting your search or filters',
+    'home.resetFilters': 'Reset Filters',
+    'home.importFirst': 'Import Literature',
+
+    // Stats
+    'stats.total': 'Total Literature',
+    'stats.categories': 'Categories',
+    'stats.latest': 'Latest Published',
+    'stats.sources': 'Sources',
+
+    // Literature Card
+    'card.unknownAuthor': 'Unknown Author',
+
+    // Detail Page
+    'detail.back': 'Library',
+    'detail.edit': 'Edit literature',
+    'detail.export': 'Export literature',
+    'detail.delete': 'Delete literature',
+    'detail.deleteConfirm': 'Are you sure you want to delete this literature? This action cannot be undone.',
+    'detail.notFound': 'Literature not found',
+    'detail.backToLibrary': 'Back to Library',
+    'detail.publicationDetails': 'Publication Details',
+    'detail.journal': 'Journal / Publisher',
+    'detail.published': 'Published',
+    'detail.volumeIssue': 'Volume / Issue',
+    'detail.source': 'Source',
+    'detail.keywords': 'Keywords',
+    'detail.abstract': 'Abstract',
+    'detail.readFull': 'Read full abstract',
+    'detail.showLess': 'Show less',
+    'detail.externalLinks': 'External Links',
+    'detail.copied': 'Copied',
+    'detail.tags': 'Tags',
+    'detail.addTag': 'Add Tag',
+    'detail.addTagPlaceholder': 'Type tag name...',
+    'detail.pdfFile': 'PDF File',
+    'detail.downloadPdf': 'Download',
+    'detail.previewPdf': 'Preview',
+    'detail.cloudLink': 'Cloud Drive Link',
+
+    // Import Page
+    'import.title': 'Import Literature',
+    'import.description': 'Add entries from RIS or BibTeX files, paste text directly, or upload a PDF.',
+    'import.uploadRis': 'Upload RIS File',
+    'import.uploadBibtex': 'Upload BibTeX File',
+    'import.dragRis': 'Drag & drop or click to select an RIS file',
+    'import.dragBibtex': 'Drag & drop or click to select a BibTeX file',
+    'import.orPaste': 'Or paste text directly',
+    'import.pasteRis': 'Paste RIS content',
+    'import.pasteBibtex': 'Paste BibTeX content',
+    'import.parse': 'Parse Pasted Text',
+    'import.recordsParsed': '{count} record(s) parsed',
+    'import.errors': '{count} error(s)',
+    'import.importRecords': 'Import {count} Record(s)',
+    'import.importing': 'Importing...',
+    'import.success': 'Records Imported',
+    'import.successDesc': 'Your literature entries have been added to the library.',
+    'import.viewLibrary': 'View Library',
+    'import.importMore': 'Import More',
+    'import.fileSuccess': 'File imported successfully',
+    'import.fileFailed': 'Failed to read file. Please try again.',
+    'import.fileProcessing': 'Processing {filename}...',
+
+    // PDF Import
+    'import.uploadPdf': 'Upload PDF File',
+    'import.dragPdf': 'Drag & drop or click to select a PDF file',
+    'import.metadataForm': 'Literature Metadata',
+    'import.pdfTitle': 'Title',
+    'import.titlePlaceholder': 'Enter the title of the literature',
+    'import.pdfAuthors': 'Authors',
+    'import.authorsPlaceholder': 'Comma-separated, e.g. Smith, John; Doe, Jane',
+    'import.pdfAbstract': 'Abstract',
+    'import.abstractPlaceholder': 'Enter the abstract of the literature',
+    'import.pdfKeywords': 'Keywords',
+    'import.keywordsPlaceholder': 'Comma-separated, e.g. machine learning, NLP',
+    'import.pdfCategory': 'Category',
+    'import.noCategory': 'No category',
+    'import.cloudLink': 'Cloud Drive Link',
+    'import.cloudLinkPlaceholder': 'https://drive.example.com/file/...',
+    'import.saveLiterature': 'Save Literature',
+    'import.saving': 'Saving...',
+    'import.pdfSuccess': 'Literature Saved',
+    'import.pdfSuccessDesc': 'Your PDF and metadata have been saved to the library.',
+    'import.importOptions': 'Import Options',
+    'import.attachPdf': 'Attach PDF to all records',
+    'import.attachCloudLink': 'Attach cloud drive link to all records',
+
+    // File Uploader
+    'upload.label': 'Upload',
+
+    // Search
+    'search.placeholder': 'Search literature...',
+    'search.clear': 'Clear search',
+
+    // Sort
+    'sort.newest': 'Newest first',
+    'sort.oldest': 'Oldest first',
+    'sort.titleAZ': 'Title A-Z',
+    'sort.titleZA': 'Title Z-A',
+    'sort.dateNewest': 'Publish date (newest)',
+    'sort.dateOldest': 'Publish date (oldest)',
+
+    // Home View
+    'home.viewCard': 'Card View',
+    'home.viewList': 'List View',
+
+    // Literature Card
+    'card.openPdf': 'Open PDF',
+    'card.openCloudLink': 'Open Cloud Link',
+
+    // Theme
+    'nav.lightMode': 'Light Mode',
+    'nav.darkMode': 'Dark Mode',
+  },
+
+  zh: {
+    // App
+    'app.name': 'LitShowShare',
+
+    // Layout / Navbar
+    'nav.import': '导入',
+    'nav.search': '搜索文献...',
+    'nav.language': '语言',
+
+    // Sidebar
+    'sidebar.categories': '分类',
+    'sidebar.all': '全部文献',
+    'sidebar.categoriesInUse': '{active}/{total} 个分类已使用',
+    'sidebar.manage': '管理分类',
+    'sidebar.addNew': '添加新分类',
+    'sidebar.categoryName': '分类名称',
+    'sidebar.editCategory': '编辑分类',
+    'sidebar.deleteCategory': '删除分类',
+    'sidebar.deleteConfirm': '确定要删除分类"{name}"吗？\n该分类下的文献条目不会被删除。',
+    'sidebar.uncategorized': '未分类',
+    'sidebar.tags': '标签',
+    'sidebar.noTags': '暂无标签',
+
+    // Home / Library
+    'home.literatureLibrary': '文献库',
+    'home.noLiterature': '还没有文献',
+    'home.noLiteratureDesc': '导入您的第一篇文献开始使用',
+    'home.noResults': '未找到匹配的文献',
+    'home.noResultsDesc': '尝试调整搜索条件或筛选器',
+    'home.resetFilters': '重置筛选',
+    'home.importFirst': '导入文献',
+    'home.viewCard': '卡片视图',
+    'home.viewList': '列表视图',
+
+    // Stats
+    'stats.total': '文献总数',
+    'stats.categories': '分类数',
+    'stats.latest': '最新发表',
+    'stats.sources': '来源数',
+
+    // Literature Card
+    'card.unknownAuthor': '未知作者',
+    'card.openPdf': '打开 PDF',
+    'card.openCloudLink': '云盘链接',
+
+    // Detail Page
+    'detail.back': '返回库',
+    'detail.edit': '编辑文献',
+    'detail.export': '导出文献',
+    'detail.delete': '删除文献',
+    'detail.deleteConfirm': '确定要删除这篇文献吗？此操作无法撤销。',
+    'detail.notFound': '未找到该文献',
+    'detail.backToLibrary': '返回文献库',
+    'detail.publicationDetails': '出版信息',
+    'detail.journal': '期刊/出版社',
+    'detail.published': '出版日期',
+    'detail.volumeIssue': '卷/期',
+    'detail.source': '来源',
+    'detail.keywords': '关键词',
+    'detail.abstract': '摘要',
+    'detail.readFull': '阅读完整摘要',
+    'detail.showLess': '收起',
+    'detail.externalLinks': '外部链接',
+    'detail.copied': '已复制',
+    'detail.tags': '标签',
+    'detail.addTag': '添加标签',
+    'detail.addTagPlaceholder': '输入标签名称...',
+    'detail.pdfFile': 'PDF 文件',
+    'detail.downloadPdf': '下载',
+    'detail.previewPdf': '预览',
+    'detail.cloudLink': '云盘链接',
+
+    // Import Page
+    'import.title': '导入文献',
+    'import.description': '从 RIS 或 BibTeX 文件导入，直接粘贴文本，或上传 PDF。',
+    'import.uploadRis': '上传 RIS 文件',
+    'import.uploadBibtex': '上传 BibTeX 文件',
+    'import.dragRis': '拖拽或点击选择 RIS 文件',
+    'import.dragBibtex': '拖拽或点击选择 BibTeX 文件',
+    'import.orPaste': '或直接粘贴文本',
+    'import.pasteRis': '粘贴 RIS 内容',
+    'import.pasteBibtex': '粘贴 BibTeX 内容',
+    'import.parse': '解析粘贴内容',
+    'import.recordsParsed': '解析了 {count} 条记录',
+    'import.errors': '{count} 个错误',
+    'import.importRecords': '导入 {count} 条记录',
+    'import.importing': '导入中...',
+    'import.success': '记录已导入',
+    'import.successDesc': '您的文献条目已添加到库中。',
+    'import.viewLibrary': '查看文献库',
+    'import.importMore': '继续导入',
+    'import.fileSuccess': '文件导入成功',
+    'import.fileFailed': '读取文件失败，请重试。',
+    'import.fileProcessing': '正在处理 {filename}...',
+
+    // PDF Import
+    'import.uploadPdf': '上传 PDF 文件',
+    'import.dragPdf': '拖拽或点击选择 PDF 文件',
+    'import.metadataForm': '文献元数据',
+    'import.pdfTitle': '标题',
+    'import.titlePlaceholder': '输入文献标题',
+    'import.pdfAuthors': '作者',
+    'import.authorsPlaceholder': '逗号分隔，如 Smith, John; Doe, Jane',
+    'import.pdfAbstract': '摘要',
+    'import.abstractPlaceholder': '输入文献摘要',
+    'import.pdfKeywords': '关键词',
+    'import.keywordsPlaceholder': '逗号分隔，如 机器学习, 自然语言处理',
+    'import.pdfCategory': '分类',
+    'import.noCategory': '无分类',
+    'import.cloudLink': '云盘链接',
+    'import.cloudLinkPlaceholder': 'https://drive.example.com/file/...',
+    'import.saveLiterature': '保存文献',
+    'import.saving': '保存中...',
+    'import.pdfSuccess': '文献已保存',
+    'import.pdfSuccessDesc': '您的 PDF 文件和元数据已保存到文献库。',
+    'import.importOptions': '导入选项',
+    'import.attachPdf': '为所有记录附加 PDF',
+    'import.attachCloudLink': '为所有记录附加云盘链接',
+
+    // File Uploader
+    'upload.label': '上传',
+
+    // Search
+    'search.placeholder': '搜索文献...',
+    'search.clear': '清除搜索',
+
+    // Sort
+    'sort.newest': '最新优先',
+    'sort.oldest': '最早优先',
+    'sort.titleAZ': '标题 A-Z',
+    'sort.titleZA': '标题 Z-A',
+    'sort.dateNewest': '出版日期（最新）',
+    'sort.dateOldest': '出版日期（最早）',
+
+    // Theme
+    'nav.lightMode': '亮色模式',
+    'nav.darkMode': '暗色模式',
+  },
+}

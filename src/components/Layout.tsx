@@ -1,0 +1,142 @@
+import { Outlet } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useLiteratureStore } from '@/store/literatureStore'
+import { useTranslation } from '@/i18n/LanguageContext'
+import { Menu, X, BookOpen, Plus, Search, Languages, Sun, Moon } from 'lucide-react'
+import { useTheme } from '@/hooks/useTheme'
+import CategoryNav from '@/components/CategoryNav'
+import type { Language } from '@/i18n/translations'
+
+/**
+ * Layout - Main application shell with top navbar, collapsible sidebar,
+ * and content area rendered via <Outlet />.
+ *
+ * Navbar: fixed top bar with logo, search, language switch, and import button.
+ * Sidebar: category navigation, collapsible on desktop,
+ *          overlay on mobile with backdrop dismiss.
+ * Content: scrollable main area for route children.
+ */
+export default function Layout() {
+  const { sidebarOpen, toggleSidebar, setSidebarOpen, searchQuery, setSearchQuery } =
+    useLiteratureStore()
+  const { language, setLanguage, t } = useTranslation()
+  const { theme, toggleTheme } = useTheme()
+
+  function toggleLanguage() {
+    const next: Language = language === 'en' ? 'zh' : 'en'
+    setLanguage(next)
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      {/* ===== Top Navbar ===== */}
+      <header className="fixed top-0 inset-x-0 h-16 backdrop-blur-md border-b z-30" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+        <div className="flex items-center h-full px-4 gap-4">
+          {/* Left: Hamburger (mobile) + Logo */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleSidebar}
+              className="md:hidden p-1.5 rounded-lg text-navy-300 hover:text-navy-100 hover:bg-navy-800/60 transition-colors"
+              aria-label="Toggle sidebar"
+            >
+              {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+
+            <Link to="/" className="flex items-center gap-2">
+              <BookOpen size={22} className="text-gold-400" />
+              <span className="font-display text-lg font-semibold text-gold-400 tracking-wide">
+                {t('app.name')}
+              </span>
+            </Link>
+          </div>
+
+          {/* Center: Search bar */}
+          <div className="flex-1 max-w-md mx-auto">
+            <div className="relative">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-500"
+              />
+              <input
+                type="text"
+                placeholder={t('nav.search')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-navy-800/60 border border-navy-700 rounded-lg pl-9 pr-4 py-2 text-sm text-navy-100 placeholder-navy-500 focus:outline-none focus:border-gold-500/50 focus:ring-1 focus:ring-gold-500/30 transition-colors"
+              />
+            </div>
+          </div>
+
+          {/* Right: Theme toggle + Language switch + Import button */}
+          <div className="flex items-center gap-2">
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-1.5 rounded-lg border border-navy-700
+                         px-3 py-2 text-xs font-medium text-navy-300
+                         hover:border-navy-500 hover:text-navy-100 transition-colors"
+              title={theme === 'dark' ? t('nav.lightMode') : t('nav.darkMode')}
+            >
+              {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            </button>
+
+            {/* Language switch */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-1.5 rounded-lg border border-navy-700
+                         px-3 py-2 text-xs font-medium text-navy-300
+                         hover:border-navy-500 hover:text-navy-100 transition-colors"
+              title={t('nav.language')}
+            >
+              <Languages size={14} />
+              <span className="hidden sm:inline">{language === 'en' ? '中文' : 'EN'}</span>
+            </button>
+
+            {/* Import button */}
+            <Link
+              to="/import"
+              className="flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-navy-950 font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+            >
+              <Plus size={16} />
+              <span className="hidden sm:inline">{t('nav.import')}</span>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* ===== Body: Sidebar + Content ===== */}
+      <div className="flex flex-1 pt-16">
+        {/* Mobile overlay backdrop */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 top-16 bg-black/50 z-20 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <aside
+          className={`
+            fixed top-16 bottom-0 left-0 z-20 w-64 bg-navy-900/50 border-r overflow-y-auto
+            transition-transform duration-300 ease-in-out
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            md:translate-x-0
+          `}
+          style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}
+        >
+          <CategoryNav />
+        </aside>
+
+        {/* Main content area */}
+        <main
+          className={`
+            flex-1 p-6 overflow-y-auto min-h-0
+            md:ml-64 transition-all duration-300
+          `}
+        >
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  )
+}
