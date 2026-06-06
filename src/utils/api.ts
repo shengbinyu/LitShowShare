@@ -6,8 +6,21 @@
 // In development, point to the local backend server
 const API_BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
+// localStorage key used to persist the JWT auth token
+export const AUTH_TOKEN_KEY = 'litShowShare_token';
+
+/** Read the current JWT token from localStorage, if any. */
+function getAuthToken(): string | null {
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Generic fetch wrapper with error handling.
+ * Automatically attaches Authorization: Bearer <token> header when a token exists.
  * All API calls go through this function.
  */
 async function request<T>(
@@ -15,13 +28,19 @@ async function request<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const url = `${API_BASE}${path}`;
+  const token = getAuthToken();
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string> | undefined),
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
     ...options,
+    headers,
   });
 
   if (!response.ok) {
@@ -183,4 +202,67 @@ export const uploadApi = {
     if (pdfPath.startsWith('http')) return pdfPath;
     return `${API_BASE}${pdfPath}`;
   },
+};
+
+// ============================================================
+// Auth API
+// ============================================================
+
+export interface PublicUser {
+  id: string;
+  username: string;
+  displayName: string;
+  role: string;
+  createdAt: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: PublicUser;
+}
+
+export interface CreateUserPayload {
+  username: string;
+  password: string;
+  displayName?: string;
+  role?: 'admin' | 'user';
+}
+
+export interface UpdateUserPayload {
+  displayName?: string;
+  role?: 'admin' | 'user';
+  password?: string;
+}
+
+export const authApi = {
+  /** Authenticate user and return JWT token + user info */
+  login: (username: string, password: string): Promise<LoginResponse> =>
+    request('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
+
+  /** Fetch the currently logged-in user */
+  getMe: (): Promise<PublicUser> => request('/api/auth/me'),
+
+  /** Admin: list all users */
+  getUsers: (): Promise<PublicUser[]> => request('/api/auth/users'),
+
+  /** Admin: create a new user */
+  createUser: (data: CreateUserPayload): Promise<PublicUser> =>
+    request('/api/auth/users', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  /** Admin: update an existing user */
+  updateUser: (id: string, data: UpdateUserPayload): Promise<PublicUser> =>
+    request(`/api/auth/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  /** Admin: delete a user */
+  deleteUser: (id: string): Promise<void> =>
+    request(`/api/auth/users/${id}`, { method: 'DELETE' }),
 };

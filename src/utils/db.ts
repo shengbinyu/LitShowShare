@@ -22,6 +22,12 @@ export interface Literature {
   pdfFileName: string;
   cloudLink: string;
   tagIds: string[];
+  /**
+   * User ID of the uploader. Always set by the backend on creation.
+   * Optional in the type because frontend code never supplies it when
+   * sending POST payloads; it is returned on read responses.
+   */
+  uploadedBy?: string;
   createdAt: string;
   updatedAt: string;
 }

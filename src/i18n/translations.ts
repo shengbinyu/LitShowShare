@@ -110,8 +110,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'import.keywordsPlaceholder': 'Comma-separated, e.g. machine learning, NLP',
     'import.pdfCategory': 'Category',
     'import.noCategory': 'No category',
-    'import.cloudLink': 'Cloud Drive Link',
-    'import.cloudLinkPlaceholder': 'https://drive.example.com/file/...',
+    'import.cloudLink': 'Full-text Link',
+    'import.cloudLinkPlaceholder': 'https://example.com/paper.pdf or cloud drive URL...',
     'import.saveLiterature': 'Save Literature',
     'import.saving': 'Saving...',
     'import.pdfSuccess': 'Literature Saved',
@@ -141,11 +141,52 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Literature Card
     'card.openPdf': 'Open PDF',
-    'card.openCloudLink': 'Open Cloud Link',
+    'card.openCloudLink': 'Open Full-text Link',
 
     // Theme
     'nav.lightMode': 'Light Mode',
     'nav.darkMode': 'Dark Mode',
+
+    // Auth
+    'auth.login': 'Login',
+    'auth.username': 'Username',
+    'auth.password': 'Password',
+    'auth.loginButton': 'Sign In',
+    'auth.loggingIn': 'Signing in...',
+    'auth.logout': 'Logout',
+    'auth.loginError': 'Invalid username or password',
+    'auth.loginRequired': 'Please login first',
+    'auth.welcomeBack': 'Welcome back',
+    'auth.signInSubtitle': 'Sign in to manage your literature library',
+    'auth.usernamePlaceholder': 'Enter your username',
+    'auth.passwordPlaceholder': 'Enter your password',
+    'auth.showPassword': 'Show password',
+    'auth.hidePassword': 'Hide password',
+    'auth.defaultAdminHint': 'Default admin: admin / admin123',
+
+    // Admin
+    'admin.userManagement': 'User Management',
+    'admin.userManagementDesc': 'Manage user accounts and permissions',
+    'admin.addUser': 'Add User',
+    'admin.editUser': 'Edit User',
+    'admin.deleteUser': 'Delete User',
+    'admin.username': 'Username',
+    'admin.displayName': 'Display Name',
+    'admin.role': 'Role',
+    'admin.admin': 'Admin',
+    'admin.user': 'User',
+    'admin.createdAt': 'Created At',
+    'admin.actions': 'Actions',
+    'admin.confirmDelete': 'Delete user "{username}"?',
+    'admin.cannotDeleteSelf': 'Cannot delete your own account',
+    'admin.password': 'Password',
+    'admin.passwordOptional': 'Password (leave blank to keep current)',
+    'admin.save': 'Save',
+    'admin.cancel': 'Cancel',
+    'admin.create': 'Create',
+    'admin.accessDenied': 'Access Denied',
+    'admin.accessDeniedDesc': 'You need administrator privileges to access this page.',
+    'admin.you': 'You',
   },
 
   zh: {
@@ -191,7 +232,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // Literature Card
     'card.unknownAuthor': '未知作者',
     'card.openPdf': '打开 PDF',
-    'card.openCloudLink': '云盘链接',
+    'card.openCloudLink': '全文链接',
 
     // Detail Page
     'detail.back': '返回库',
@@ -218,7 +259,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'detail.pdfFile': 'PDF 文件',
     'detail.downloadPdf': '下载',
     'detail.previewPdf': '预览',
-    'detail.cloudLink': '云盘链接',
+    'detail.cloudLink': '全文链接',
 
     // Import Page
     'import.title': '导入文献',
@@ -257,15 +298,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'import.keywordsPlaceholder': '逗号分隔，如 机器学习, 自然语言处理',
     'import.pdfCategory': '分类',
     'import.noCategory': '无分类',
-    'import.cloudLink': '云盘链接',
-    'import.cloudLinkPlaceholder': 'https://drive.example.com/file/...',
+    'import.cloudLink': '全文链接',
+    'import.cloudLinkPlaceholder': 'https://example.com/paper.pdf 或云盘地址...',
     'import.saveLiterature': '保存文献',
     'import.saving': '保存中...',
     'import.pdfSuccess': '文献已保存',
     'import.pdfSuccessDesc': '您的 PDF 文件和元数据已保存到文献库。',
     'import.importOptions': '导入选项',
     'import.attachPdf': '为所有记录附加 PDF',
-    'import.attachCloudLink': '为所有记录附加云盘链接',
+    'import.attachCloudLink': '为所有记录附加全文链接',
 
     // File Uploader
     'upload.label': '上传',
@@ -285,5 +326,46 @@ export const translations: Record<Language, Record<string, string>> = {
     // Theme
     'nav.lightMode': '亮色模式',
     'nav.darkMode': '暗色模式',
+
+    // Auth
+    'auth.login': '登录',
+    'auth.username': '用户名',
+    'auth.password': '密码',
+    'auth.loginButton': '登 录',
+    'auth.loggingIn': '登录中...',
+    'auth.logout': '退出登录',
+    'auth.loginError': '用户名或密码错误',
+    'auth.loginRequired': '请先登录',
+    'auth.welcomeBack': '欢迎回来',
+    'auth.signInSubtitle': '登录以管理您的文献库',
+    'auth.usernamePlaceholder': '请输入用户名',
+    'auth.passwordPlaceholder': '请输入密码',
+    'auth.showPassword': '显示密码',
+    'auth.hidePassword': '隐藏密码',
+    'auth.defaultAdminHint': '默认管理员：admin / admin123',
+
+    // Admin
+    'admin.userManagement': '用户管理',
+    'admin.userManagementDesc': '管理用户账号和权限',
+    'admin.addUser': '添加用户',
+    'admin.editUser': '编辑用户',
+    'admin.deleteUser': '删除用户',
+    'admin.username': '用户名',
+    'admin.displayName': '显示名称',
+    'admin.role': '角色',
+    'admin.admin': '管理员',
+    'admin.user': '普通用户',
+    'admin.createdAt': '创建时间',
+    'admin.actions': '操作',
+    'admin.confirmDelete': '确定删除用户 "{username}" 吗？',
+    'admin.cannotDeleteSelf': '不能删除自己的账号',
+    'admin.password': '密码',
+    'admin.passwordOptional': '密码（留空则保持不变）',
+    'admin.save': '保存',
+    'admin.cancel': '取消',
+    'admin.create': '创建',
+    'admin.accessDenied': '访问被拒绝',
+    'admin.accessDeniedDesc': '您需要管理员权限才能访问此页面。',
+    'admin.you': '您',
   },
 }

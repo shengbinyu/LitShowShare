@@ -4,8 +4,19 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import db from '../db.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
+
+/**
+ * Permission check: the requester must be the uploader OR an admin.
+ * Returns true if permitted, false otherwise.
+ */
+function canModifyLiterature(req: Request, literature: { uploadedBy?: string }): boolean {
+  if (!req.user) return false;
+  if (req.user.role === 'admin') return true;
+  return literature.uploadedBy === req.user.id;
+}
 
 // Resolve uploads directory for PDF file deletion
 const __filename = fileURLToPath(import.meta.url);
@@ -31,7 +42,7 @@ function parseLiteratureFields(row: Record<string, unknown>) {
  */
 router.get('/', (_req: Request, res: Response) => {
   try {
-    const rows = db.prepare('SELECT * FROM literatures ORDER BY createdAt DESC').all();
+    const rows = db.prepare('SELECT * FROM literatures ORDER BY createdAt DESC').all() as Record<string, unknown>[];
     const literatures = rows.map(parseLiteratureFields);
     res.json(literatures);
   } catch (err) {
@@ -61,7 +72,7 @@ router.get('/:id', (req: Request, res: Response) => {
  * POST / - Create a new literature
  * Generates UUID, sets timestamps, stringifies JSON fields.
  */
-router.post('/', (req: Request, res: Response) => {
+router.post('/', authenticate, (req: Request, res: Response) => {
   try {
     const id = uuidv4();
     const now = new Date().toISOString();
@@ -85,12 +96,15 @@ router.post('/', (req: Request, res: Response) => {
       tagIds = [],
     } = req.body;
 
+    // uploadedBy is always taken from the authenticated user, never trusted from the client
+    const uploadedBy = req.user!.id;
+
     db.prepare(`
       INSERT INTO literatures (
         id, title, authors, abstract, keywords, publishDate, category,
         doi, journal, volume, number, pages, publisher, sourceFormat,
-        pdfPath, pdfFileName, cloudLink, tagIds, createdAt, updatedAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        pdfPath, pdfFileName, cloudLink, tagIds, uploadedBy, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       id, title,
       JSON.stringify(authors),
@@ -101,6 +115,7 @@ router.post('/', (req: Request, res: Response) => {
       doi, journal, volume, number, pages, publisher, sourceFormat,
       pdfPath, pdfFileName, cloudLink,
       JSON.stringify(tagIds),
+      uploadedBy,
       now, now
     );
 
@@ -117,11 +132,17 @@ router.post('/', (req: Request, res: Response) => {
  * PUT /:id - Update an existing literature
  * Updates updatedAt timestamp and stringifies JSON fields.
  */
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', authenticate, (req: Request, res: Response) => {
   try {
     const existing = db.prepare('SELECT * FROM literatures WHERE id = ?').get(req.params.id);
     if (!existing) {
       res.status(404).json({ error: 'Literature not found' });
+      return;
+    }
+
+    // Permission check: only uploader or admin can update
+    if (!canModifyLiterature(req, existing as any)) {
+      res.status(403).json({ error: 'You do not have permission to modify this literature' });
       return;
     }
 
@@ -176,11 +197,17 @@ router.put('/:id', (req: Request, res: Response) => {
 /**
  * DELETE /:id - Delete a literature, its external links, and PDF file
  */
-router.delete('/:id', (req: Request, res: Response) => {
+router.delete('/:id', authenticate, (req: Request, res: Response) => {
   try {
     const literature = db.prepare('SELECT * FROM literatures WHERE id = ?').get(req.params.id) as any;
     if (!literature) {
       res.status(404).json({ error: 'Literature not found' });
+      return;
+    }
+
+    // Permission check: only uploader or admin can delete
+    if (!canModifyLiterature(req, literature)) {
+      res.status(403).json({ error: 'You do not have permission to delete this literature' });
       return;
     }
 

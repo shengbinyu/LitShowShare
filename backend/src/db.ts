@@ -1,6 +1,8 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import bcrypt from 'bcryptjs';
+import { v4 as uuidv4 } from 'uuid';
 
 // Resolve the directory name for ESM compatibility
 const __filename = fileURLToPath(import.meta.url);
@@ -71,6 +73,40 @@ db.exec(`
     lastChecked TEXT NOT NULL DEFAULT '',
     FOREIGN KEY (literatureId) REFERENCES literatures(id) ON DELETE CASCADE
   );
+
+  CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    displayName TEXT NOT NULL DEFAULT '',
+    role TEXT NOT NULL DEFAULT 'user',
+    createdAt TEXT NOT NULL
+  );
 `);
+
+// ============================================================
+// Schema migration: ensure literatures.uploadedBy column exists
+// ============================================================
+// SQLite does not support "ADD COLUMN IF NOT EXISTS", so detect and add manually.
+const litColumns = db.prepare("PRAGMA table_info(literatures)").all() as Array<{ name: string }>;
+const hasUploadedBy = litColumns.some((c) => c.name === 'uploadedBy');
+if (!hasUploadedBy) {
+  db.exec(`ALTER TABLE literatures ADD COLUMN uploadedBy TEXT NOT NULL DEFAULT ''`);
+  console.log('[DB] Migrated: added uploadedBy column to literatures table');
+}
+
+// ============================================================
+// Seed default admin account on first run
+// ============================================================
+const adminExists = db.prepare("SELECT id FROM users WHERE username = 'admin'").get();
+if (!adminExists) {
+  const hashed = bcrypt.hashSync('admin123', 10);
+  const now = new Date().toISOString();
+  db.prepare(
+    `INSERT INTO users (id, username, password, displayName, role, createdAt)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+  ).run(uuidv4(), 'admin', hashed, 'Administrator', 'admin', now);
+  console.log('[DB] Seeded default admin user (username: admin, password: admin123)');
+}
 
 export default db;

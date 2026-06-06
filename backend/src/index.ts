@@ -9,6 +9,7 @@ import categoriesRouter from './routes/categories.js';
 import tagsRouter from './routes/tags.js';
 import externalLinksRouter from './routes/externalLinks.js';
 import uploadRouter from './routes/upload.js';
+import authRouter from './routes/auth.js';
 
 // Resolve directory name for ESM compatibility
 const __filename = fileURLToPath(import.meta.url);
@@ -35,6 +36,7 @@ if (!fs.existsSync(uploadsDir)) {
 app.use('/uploads', express.static(uploadsDir));
 
 // Mount API route handlers
+app.use('/api/auth', authRouter);
 app.use('/api/literatures', literaturesRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/tags', tagsRouter);

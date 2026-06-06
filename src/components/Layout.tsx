@@ -1,8 +1,10 @@
 import { Outlet } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
 import { useLiteratureStore } from '@/store/literatureStore'
+import { useAuthStore } from '@/store/authStore'
 import { useTranslation } from '@/i18n/LanguageContext'
-import { Menu, X, BookOpen, Plus, Search, Languages, Sun, Moon } from 'lucide-react'
+import { Menu, X, BookOpen, Plus, Search, Languages, Sun, Moon, User, LogOut, Users, LogIn } from 'lucide-react'
 import { useTheme } from '@/hooks/useTheme'
 import CategoryNav from '@/components/CategoryNav'
 import type { Language } from '@/i18n/translations'
@@ -21,10 +23,39 @@ export default function Layout() {
     useLiteratureStore()
   const { language, setLanguage, t } = useTranslation()
   const { theme, toggleTheme } = useTheme()
+  const { isAuthenticated, isAdmin, user, logout } = useAuthStore()
+  const navigate = useNavigate()
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement | null>(null)
+
+  // Close user menu on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false)
+      }
+    }
+    if (userMenuOpen) document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [userMenuOpen])
 
   function toggleLanguage() {
     const next: Language = language === 'en' ? 'zh' : 'en'
     setLanguage(next)
+  }
+
+  function handleLogout() {
+    logout()
+    setUserMenuOpen(false)
+    navigate('/')
+  }
+
+  // ============================================================
+  // Auth gate: any page under Layout requires a logged-in user.
+  // Unauthenticated visitors are redirected to /login.
+  // ============================================================
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
   }
 
   return (
@@ -100,6 +131,63 @@ export default function Layout() {
               <Plus size={16} />
               <span className="hidden sm:inline">{t('nav.import')}</span>
             </Link>
+
+            {/* User menu / Login */}
+            {isAuthenticated && user ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen((v) => !v)}
+                  className="flex items-center gap-1.5 rounded-lg border theme-border-primary px-3 py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"
+                  title={user.displayName || user.username}
+                >
+                  <User size={14} />
+                  <span className="hidden sm:inline max-w-[80px] truncate">
+                    {user.displayName || user.username}
+                  </span>
+                </button>
+                {userMenuOpen && (
+                  <div
+                    className="absolute right-0 top-full mt-1.5 w-48 rounded-lg border theme-border-primary shadow-lg overflow-hidden z-40"
+                    style={{ backgroundColor: 'var(--bg-secondary)' }}
+                  >
+                    <div className="px-3 py-2 border-b theme-border-primary">
+                      <p className="text-sm font-medium theme-text-primary truncate">
+                        {user.displayName || user.username}
+                      </p>
+                      <p className="text-xs theme-text-muted">
+                        {isAdmin ? t('admin.admin') : t('admin.user')}
+                      </p>
+                    </div>
+                    {isAdmin && (
+                      <Link
+                        to="/admin/users"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-sm theme-text-secondary hover:theme-bg-hover hover:theme-text-primary transition-colors"
+                      >
+                        <Users size={14} />
+                        {t('admin.userManagement')}
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm theme-text-secondary hover:theme-bg-hover hover:text-red-500 transition-colors"
+                    >
+                      <LogOut size={14} />
+                      {t('auth.logout')}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center gap-1.5 rounded-lg border theme-border-primary px-3 py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"
+                title={t('auth.login')}
+              >
+                <LogIn size={14} />
+                <span className="hidden sm:inline">{t('auth.login')}</span>
+              </Link>
+            )}
           </div>
         </div>
       </header>

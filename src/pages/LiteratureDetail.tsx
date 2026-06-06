@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, Pencil, Trash2, Download, Check, X as XIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useLiterature, useExternalLinks, useTags, deleteLiterature, updateLiterature, useLiteratureMutations, useCategories } from '@/hooks/useLiterature'
+import { useAuthStore } from '@/store/authStore'
 import { useTranslation } from '@/i18n/LanguageContext'
 import MetadataDisplay from '@/components/MetadataDisplay'
 
@@ -24,6 +25,12 @@ export default function LiteratureDetail() {
   const categories = useCategories()
   const mutations = useLiteratureMutations()
   const { t } = useTranslation()
+  const { user, isAdmin } = useAuthStore()
+
+  // Permission: only the uploader or an admin can modify a literature record
+  const canModify = Boolean(
+    user && literature && (isAdmin || literature.uploadedBy === user.id),
+  )
 
   // Track whether the initial query window has elapsed.
   const [querySettled, setQuerySettled] = useState(false)
@@ -416,10 +423,10 @@ export default function LiteratureDetail() {
               />
             </div>
 
-            {/* Cloud Link */}
+            {/* Full-text Link */}
             <div className="space-y-1.5">
               <label className="font-body text-sm font-medium theme-text-label">
-                {t('detail.cloudLink') || 'Cloud Link'}
+                {t('detail.cloudLink') || 'Full-text Link'}
               </label>
               <input
                 type="text"
@@ -457,14 +464,16 @@ export default function LiteratureDetail() {
         </Link>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleStartEdit}
-            title={t('detail.edit')}
-            className="rounded-lg p-2 theme-text-muted
-                       hover:theme-bg-hover hover:text-gold-500 transition-colors"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
+          {canModify && (
+            <button
+              onClick={handleStartEdit}
+              title={t('detail.edit')}
+              className="rounded-lg p-2 theme-text-muted
+                         hover:theme-bg-hover hover:text-gold-500 transition-colors"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          )}
           <button
             onClick={handleExport}
             title={t('detail.export')}
@@ -473,14 +482,16 @@ export default function LiteratureDetail() {
           >
             <Download className="h-4 w-4" />
           </button>
-          <button
-            onClick={handleDelete}
-            title={t('detail.delete')}
-            className="rounded-lg p-2 theme-text-muted
-                       hover:theme-bg-hover hover:text-red-500 transition-colors"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+          {canModify && (
+            <button
+              onClick={handleDelete}
+              title={t('detail.delete')}
+              className="rounded-lg p-2 theme-text-muted
+                         hover:theme-bg-hover hover:text-red-500 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
 

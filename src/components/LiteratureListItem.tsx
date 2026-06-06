@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { FileText, Cloud } from 'lucide-react'
 import type { Literature, Category } from '@/utils/db'
+import { getPdfUrl } from '@/hooks/useLiterature'
 import HighlightText from '@/components/HighlightText'
 
 interface LiteratureListItemProps {
@@ -66,26 +67,29 @@ export default function LiteratureListItem({
         </span>
       )}
 
-      {/* PDF / Cloud Link button */}
+      {/* PDF / Full-text Link buttons - show both if available */}
       {(literature.pdfPath || literature.cloudLink) && (
-        <div className="shrink-0">
-          {literature.pdfPath ? (
+        <div className="shrink-0 flex items-center gap-1">
+          {literature.pdfPath && (
             <a
-              href={`/${literature.pdfPath}`}
+              href={getPdfUrl(literature.pdfPath)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
               onClick={(e) => e.stopPropagation()}
+              title="PDF"
             >
               <FileText className="w-3 h-3" />
             </a>
-          ) : (
+          )}
+          {literature.cloudLink && (
             <a
               href={literature.cloudLink}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
               onClick={(e) => e.stopPropagation()}
+              title="Full-text Link"
             >
               <Cloud className="w-3 h-3" />
             </a>

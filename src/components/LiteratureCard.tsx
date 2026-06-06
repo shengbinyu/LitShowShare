@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { Calendar, User, ExternalLink, BookOpen, Hash, FileText, Cloud } from 'lucide-react'
 import type { Literature, Category, Tag } from '@/utils/db'
 import { useTranslation } from '@/i18n/LanguageContext'
+import { getPdfUrl } from '@/hooks/useLiterature'
 import HighlightText from '@/components/HighlightText'
 
 // ============================================================
@@ -145,12 +146,12 @@ export default function LiteratureCard({
           </a>
         )}
 
-        {/* PDF / Cloud Link quick access */}
+        {/* PDF / Full-text Link quick access - show both if available */}
         {(literature.pdfPath || literature.cloudLink) && (
-          <div className="mt-2">
-            {literature.pdfPath ? (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {literature.pdfPath && (
               <a
-                href={`/${literature.pdfPath}`}
+                href={getPdfUrl(literature.pdfPath)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2.5 py-1 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
@@ -158,7 +159,8 @@ export default function LiteratureCard({
                 <FileText className="w-3 h-3" />
                 {t('card.openPdf')}
               </a>
-            ) : literature.cloudLink ? (
+            )}
+            {literature.cloudLink && (
               <a
                 href={literature.cloudLink}
                 target="_blank"
@@ -168,7 +170,7 @@ export default function LiteratureCard({
                 <Cloud className="w-3 h-3" />
                 {t('card.openCloudLink')}
               </a>
-            ) : null}
+            )}
           </div>
         )}
       </div>
