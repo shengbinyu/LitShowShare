@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import { useLiteratureStore } from '@/store/literatureStore'
 import { useAuthStore } from '@/store/authStore'
@@ -51,12 +51,9 @@ export default function Layout() {
   }
 
   // ============================================================
-  // Auth gate: any page under Layout requires a logged-in user.
-  // Unauthenticated visitors are redirected to /login.
+  // Layout is public: anonymous visitors may browse Home/Detail.
+  // Route-level guards (RequireAuth in App.tsx) protect Import/Admin.
   // ============================================================
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>

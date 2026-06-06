@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
-import { FileText, Cloud } from 'lucide-react'
+import { FileText, Cloud, Lock } from 'lucide-react'
 import type { Literature, Category } from '@/utils/db'
 import { getPdfUrl } from '@/hooks/useLiterature'
+import { useAuthStore } from '@/store/authStore'
+import { useTranslation } from '@/i18n/LanguageContext'
 import HighlightText from '@/components/HighlightText'
 
 interface LiteratureListItemProps {
@@ -14,6 +16,8 @@ export default function LiteratureListItem({
   category,
 }: LiteratureListItemProps) {
 
+  const { isAuthenticated } = useAuthStore()
+  const { t } = useTranslation()
   const stripColor = category?.color ?? '#c9a84c'
 
   const year = literature.publishDate
@@ -71,28 +75,50 @@ export default function LiteratureListItem({
       {(literature.pdfPath || literature.cloudLink) && (
         <div className="shrink-0 flex items-center gap-1">
           {literature.pdfPath && (
-            <a
-              href={getPdfUrl(literature.pdfPath)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
-              onClick={(e) => e.stopPropagation()}
-              title="PDF"
-            >
-              <FileText className="w-3 h-3" />
-            </a>
+            isAuthenticated ? (
+              <a
+                href={getPdfUrl(literature.pdfPath)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
+                onClick={(e) => e.stopPropagation()}
+                title="PDF"
+              >
+                <FileText className="w-3 h-3" />
+              </a>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
+                onClick={(e) => e.stopPropagation()}
+                title={t('detail.loginToViewPdf')}
+              >
+                <Lock className="w-3 h-3" />
+              </Link>
+            )
           )}
           {literature.cloudLink && (
-            <a
-              href={literature.cloudLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
-              onClick={(e) => e.stopPropagation()}
-              title="Full-text Link"
-            >
-              <Cloud className="w-3 h-3" />
-            </a>
+            isAuthenticated ? (
+              <a
+                href={literature.cloudLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
+                onClick={(e) => e.stopPropagation()}
+                title="Full-text Link"
+              >
+                <Cloud className="w-3 h-3" />
+              </a>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-1 rounded-md theme-accent-subtle-bg border theme-accent-subtle-border px-2 py-0.5 text-xs theme-accent-subtle-text hover:brightness-110 transition-all"
+                onClick={(e) => e.stopPropagation()}
+                title={t('detail.loginToViewCloudLink')}
+              >
+                <Lock className="w-3 h-3" />
+              </Link>
+            )
           )}
         </div>
       )}

@@ -197,13 +197,13 @@ export default function Home() {
       ) : (
         viewMode === 'card' ? (
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr"
             variants={gridContainerVariants}
             initial="hidden"
             animate="visible"
           >
             {filteredLiteratures.map((lit, idx) => (
-              <motion.div key={lit.id} variants={gridItemVariants}>
+              <motion.div key={lit.id} variants={gridItemVariants} className="h-full">
                 <LiteratureCard
                   literature={lit}
                   category={categoryMap.get(lit.category ?? '')}

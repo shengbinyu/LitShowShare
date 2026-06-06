@@ -110,21 +110,22 @@ See `deploy/deploy.sh` for the automated deployment script using systemd and Ngi
 
 ### Literature & content
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET    | /api/literatures | List all literatures |
-| POST   | /api/literatures | Create a literature |
-| GET    | /api/literatures/:id | Get literature details |
-| PUT    | /api/literatures/:id | Update literature |
-| DELETE | /api/literatures/:id | Delete literature |
-| POST   | /api/upload/pdf | Upload a PDF file |
-| GET    | /api/categories | List categories |
-| POST   | /api/categories | Create category |
-| GET    | /api/tags | List tags |
-| POST   | /api/tags | Create tag |
-| GET    | /api/external-links/:literatureId | List external links |
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET    | /api/literatures | public | List all literatures (metadata only; PDF/cloud links shown but gated on the client) |
+| POST   | /api/literatures | user | Create a literature |
+| GET    | /api/literatures/:id | public | Get literature details |
+| PUT    | /api/literatures/:id | user | Update literature |
+| DELETE | /api/literatures/:id | user | Delete literature |
+| POST   | /api/upload/pdf | user | Upload a PDF file |
+| GET    | /uploads/:filename | user | Serve uploaded PDF (accepts `Authorization` header **or** `?token=<jwt>` query parameter) |
+| GET    | /api/categories | public | List categories |
+| POST   | /api/categories | user | Create category |
+| GET    | /api/tags | public | List tags |
+| POST   | /api/tags | user | Create tag |
+| GET    | /api/external-links/:literatureId | public | List external links |
 
-Protected endpoints expect a `Authorization: Bearer <token>` header obtained from `/api/auth/login`.
+Protected endpoints expect an `Authorization: Bearer <token>` header obtained from `/api/auth/login`. The `/uploads/*` route additionally accepts the token via a `?token=` query parameter so that browser-triggered downloads / new-tab previews can carry credentials.
 
 ## License
 

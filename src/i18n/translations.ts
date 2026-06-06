@@ -72,6 +72,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'detail.downloadPdf': 'Download',
     'detail.previewPdf': 'Preview',
     'detail.cloudLink': 'Cloud Drive Link',
+    'detail.loginToViewPdf': 'Log in to view the PDF',
+    'detail.loginToViewCloudLink': 'Log in to view the full-text link',
+    'detail.loginNow': 'Log in',
 
     // Import Page
     'import.title': 'Import Literature',
@@ -260,6 +263,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'detail.downloadPdf': '下载',
     'detail.previewPdf': '预览',
     'detail.cloudLink': '全文链接',
+    'detail.loginToViewPdf': '登录后可查看 PDF',
+    'detail.loginToViewCloudLink': '登录后可查看全文链接',
+    'detail.loginNow': '立即登录',
 
     // Import Page
     'import.title': '导入文献',
