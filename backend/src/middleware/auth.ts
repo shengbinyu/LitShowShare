@@ -30,11 +30,20 @@ export function signToken(user: AuthUser): string {
 
 /**
  * Extract a Bearer token from the Authorization header, returns null if absent.
+ * Falls back to a `?token=` query string parameter for resources that cannot
+ * set custom headers (e.g. <a href> / <iframe> for PDF preview & download).
  */
 function extractToken(req: Request): string | null {
   const header = req.headers.authorization;
-  if (!header || !header.startsWith('Bearer ')) return null;
-  return header.slice(7);
+  if (header && header.startsWith('Bearer ')) {
+    return header.slice(7);
+  }
+  // Fallback: token in query string (used by browser-triggered file downloads)
+  const queryToken = req.query?.token;
+  if (typeof queryToken === 'string' && queryToken.length > 0) {
+    return queryToken;
+  }
+  return null;
 }
 
 /**

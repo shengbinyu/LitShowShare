@@ -196,11 +196,20 @@ export const uploadApi = {
     return response.json();
   },
 
-  /** Get the full URL for a PDF file */
+  /**
+   * Get the full URL for a PDF file.
+   * Appends `?token=<jwt>` so that <a href> / <iframe> requests
+   * (which cannot set the Authorization header) still authenticate
+   * against the backend's static /uploads guard.
+   */
   getPdfUrl: (pdfPath: string): string => {
     if (!pdfPath) return '';
     if (pdfPath.startsWith('http')) return pdfPath;
-    return `${API_BASE}${pdfPath}`;
+    const base = `${API_BASE}${pdfPath}`;
+    const token = getAuthToken();
+    if (!token) return base;
+    const sep = base.includes('?') ? '&' : '?';
+    return `${base}${sep}token=${encodeURIComponent(token)}`;
   },
 };
 

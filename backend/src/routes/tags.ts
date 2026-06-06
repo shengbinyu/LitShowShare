@@ -52,7 +52,8 @@ router.post('/', (req: Request, res: Response) => {
  */
 router.delete('/:id', (req: Request, res: Response) => {
   try {
-    const existing = db.prepare('SELECT * FROM tags WHERE id = ?').get(req.params.id);
+    const tagId = req.params.id as string;
+    const existing = db.prepare('SELECT * FROM tags WHERE id = ?').get(tagId);
     if (!existing) {
       res.status(404).json({ error: 'Tag not found' });
       return;
@@ -67,14 +68,14 @@ router.delete('/:id', (req: Request, res: Response) => {
     const removeTagFromLiteratures = db.transaction(() => {
       for (const lit of literatures) {
         const tagIds: string[] = JSON.parse(lit.tagIds || '[]');
-        if (tagIds.includes(req.params.id)) {
-          const updatedTagIds = tagIds.filter((tid) => tid !== req.params.id);
+        if (tagIds.includes(tagId)) {
+          const updatedTagIds = tagIds.filter((tid) => tid !== tagId);
           updateStmt.run(JSON.stringify(updatedTagIds), now, lit.id);
         }
       }
 
       // Delete the tag itself
-      db.prepare('DELETE FROM tags WHERE id = ?').run(req.params.id);
+      db.prepare('DELETE FROM tags WHERE id = ?').run(tagId);
     });
 
     removeTagFromLiteratures();

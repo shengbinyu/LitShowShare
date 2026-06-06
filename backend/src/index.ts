@@ -10,6 +10,7 @@ import tagsRouter from './routes/tags.js';
 import externalLinksRouter from './routes/externalLinks.js';
 import uploadRouter from './routes/upload.js';
 import authRouter from './routes/auth.js';
+import { authenticate } from './middleware/auth.js';
 
 // Resolve directory name for ESM compatibility
 const __filename = fileURLToPath(import.meta.url);
@@ -28,12 +29,13 @@ if (!isProduction) {
 // Parse JSON request bodies with a 50mb limit for PDF uploads
 app.use(express.json({ limit: '50mb' }));
 
-// Serve uploaded files as static assets
+// Serve uploaded files as static assets (auth-guarded:
+// only logged-in users may access PDF files via /uploads/*).
 const uploadsDir = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', authenticate, express.static(uploadsDir));
 
 // Mount API route handlers
 app.use('/api/auth', authRouter);
