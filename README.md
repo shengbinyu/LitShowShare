@@ -6,11 +6,14 @@ A literature management web application for organizing, importing, and browsing 
 
 - **User authentication** — JWT-based login with bcrypt password hashing
 - **Role-based access** — Admin and regular user roles, with an admin-only user management page
+- **Anonymous browsing** — Visitors can browse the literature library and detail pages without logging in; only the **PDF file** and **full-text (cloud) link** are gated behind login. `Import` and `Admin Users` pages still require authentication.
+- **Token-aware PDF delivery** — `/uploads/*` is protected by JWT; the frontend appends `?token=<jwt>` to PDF URLs so `<a target="_blank">` preview / download flows authenticate without manual header injection.
 - **Show/hide password** — Toggle password visibility on the login form
 - **Import papers** from RIS/BibTeX files, PDF uploads, and external links
 - **Organize literature** with custom categories and tags
 - **Full-text search** across titles, authors, abstracts, and keywords
 - **Detail view** with metadata, abstracts, PDF viewer, and linked resources
+- **Equal-height literature cards** — Home page grid uses `auto-rows-fr` + three-section flex layout (header / abstract / footer) so every card has a consistent height and visual density, regardless of metadata length
 - **Dual themes** — Navy-gold dark theme and warm ivory-gold editorial light theme
 - **i18n support** — English and Chinese
 
