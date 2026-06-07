@@ -4,7 +4,6 @@ name: Build and Push to Aliyun ACR
 # LitShowShare - GitHub Actions Workflow
 # ------------------------------------------------------------
 # Build Docker image and push to Aliyun Container Registry (ACR).
-# Optionally trigger a remote VPS deployment via SSH afterwards.
 #
 # Required GitHub Repository Secrets:
 #   ACR_REGISTRY        e.g. registry.cn-hangzhou.aliyuncs.com
@@ -12,12 +11,6 @@ name: Build and Push to Aliyun ACR
 #   ACR_IMAGE           image name, e.g. litshowshare
 #   ACR_USERNAME        aliyun ACR account username
 #   ACR_PASSWORD        aliyun ACR account password (use a fine-grained one)
-#
-# Optional Secrets (only if auto-deploy is enabled):
-#   VPS_HOST            VPS IP or domain
-#   VPS_USER            SSH username (e.g. root)
-#   VPS_SSH_KEY         SSH private key (entire content)
-#   VPS_DEPLOY_PATH     remote compose project dir (default: /opt/litshowshare)
 # ============================================================
 
 on:
@@ -28,11 +21,6 @@ on:
     tags:
       - 'v*.*.*'
   workflow_dispatch:
-    inputs:
-      deploy:
-        description: 'Also deploy to VPS via SSH'
-        type: boolean
-        default: false
 
 concurrency:
   group: build-and-push-${{ github.ref }}
@@ -44,9 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
-    outputs:
-      image_tag: ${{ steps.meta.outputs.primary_tag }}
 
     steps:
       - name: Checkout source
@@ -103,37 +88,3 @@ jobs:
             echo "- \`${{ steps.meta.outputs.image_full }}:${{ steps.meta.outputs.primary_tag }}\`"
             echo "- \`${{ steps.meta.outputs.image_full }}:${{ steps.meta.outputs.short_sha }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
-
-  # ----------------------------------------------------------
-  # Optional: SSH into VPS and trigger docker compose pull/up.
-  # Only runs when manually dispatched with deploy=true,
-  # or when pushing a version tag.
-  # ----------------------------------------------------------
-  deploy-vps:
-    name: Deploy to VPS
-    needs: build-and-push
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' || github.ref_type == 'tag' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Setup SSH key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
-
-      - name: Add VPS host to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
-
-      - name: Pull and restart on VPS
-        env:
-          VPS_USER: ${{ secrets.VPS_USER }}
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH || '/opt/litshowshare' }}
-        run: |
-          ssh "${VPS_USER}@${VPS_HOST}" \
-            "cd ${DEPLOY_PATH} && \
-             docker compose pull && \
-             docker compose up -d && \
-             docker image prune -f"
