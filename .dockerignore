@@ -1,0 +1,59 @@
+# ===== Version control =====
+.git
+.gitignore
+.gitattributes
+.gitlab-ci.yml
+
+# ===== Dependencies =====
+node_modules
+**/node_modules
+
+# ===== Build output =====
+dist
+dist-ssr
+**/dist
+
+# ===== Runtime data (must NOT be baked into image) =====
+backend/data
+backend/uploads
+_test_data
+_test_uploads
+
+# ===== Logs =====
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ===== Local env files =====
+.env
+.env.*
+!.env.example
+!.env.docker.example
+
+# ===== Editor / IDE =====
+.vscode
+.idea
+.trae
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.iml
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+
+# ===== Docs / CI / legacy deploy =====
+README.md
+LICENSE
+deploy
+
+# ===== Docker itself =====
+Dockerfile
+.dockerignore
+docker-compose*.yml

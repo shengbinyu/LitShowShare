@@ -1,0 +1,51 @@
+# ============================================================
+# LitShowShare - docker-compose for VPS deployment
+# Pull-only mode: image is built & pushed elsewhere (local script or CI),
+# this file simply pulls and runs it on the VPS.
+#
+# Usage on VPS:
+#   cd /opt/litshowshare
+#   cp .env.docker.example .env   # then edit values
+#   docker compose pull
+#   docker compose up -d
+# ============================================================
+
+services:
+  litshowshare:
+    image: ${IMAGE_REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG:-latest}
+    container_name: litshowshare
+    restart: unless-stopped
+
+    ports:
+      # Map host port -> container 3001. Put behind Nginx if desired.
+      - "${HOST_PORT:-3001}:3001"
+
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      HOST: "0.0.0.0"
+      TZ: Asia/Shanghai
+      # JWT secret for backend auth (MUST be set in .env)
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+
+    # Persistent host bind-mounts for important data
+    volumes:
+      - ./data:/app/backend/data           # SQLite database files
+      - ./uploads:/app/backend/uploads     # Uploaded PDFs / literature attachments
+
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "require('http').get('http://127.0.0.1:3001/api/auth', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
