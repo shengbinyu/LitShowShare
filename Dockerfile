@@ -63,11 +63,12 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 
-# Install tini for proper PID 1 signal handling
+# Install tini + su-exec for PID 1 signal handling and privilege drop
 RUN sed -i 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/debian.sources \
   && apt-get update \
-  && apt-get install -y --no-install-recommends tini ca-certificates tzdata \
-  && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y --no-install-recommends tini ca-certificates tzdata gosu \
+  && rm -rf /var/lib/apt/lists/* \
+  && ln -sf /usr/sbin/gosu /usr/local/bin/su-exec
 
 # Copy frontend build output (served by backend in production)
 COPY --from=frontend-builder /app/dist ./dist
@@ -78,12 +79,15 @@ COPY backend/tsconfig.json ./backend/tsconfig.json
 COPY backend/src ./backend/src
 COPY --from=backend-deps /app/backend/node_modules ./backend/node_modules
 
-# Create persistent dirs and grant ownership to the non-root "node" user
+# Copy entrypoint script that handles PUID/PGID and dir ownership
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Create persistent dirs (ownership fixed at runtime by entrypoint)
 RUN mkdir -p /app/backend/data /app/backend/uploads \
   && chown -R node:node /app
 
-USER node
-
+# Container starts as root; entrypoint will drop to "node" (uid configurable via PUID/PGID)
 EXPOSE 3001
 
 # Persistent volumes (override via docker-compose for host bind-mount)
@@ -93,6 +97,6 @@ VOLUME ["/app/backend/data", "/app/backend/uploads"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node -e "require('http').get('http://127.0.0.1:'+ (process.env.PORT||3001) +'/api/auth', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"
 
-# Use tini as PID 1, run backend via tsx (matches `npm start`)
-ENTRYPOINT ["/usr/bin/tini", "--"]
+# Entrypoint: fix permissions, drop to node user, then run app under tini
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["node", "backend/node_modules/.bin/tsx", "backend/src/index.ts"]
