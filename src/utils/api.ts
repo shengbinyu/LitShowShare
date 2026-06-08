@@ -214,6 +214,103 @@ export const uploadApi = {
 };
 
 // ============================================================
+// Data Management API (export / import)
+// ============================================================
+
+export interface ImportPreviewResult {
+  totalImported: number;
+  newCount: number;
+  duplicateCount: number;
+  categories: Array<{ id: string; name: string; color: string; description: string }>;
+  tags: Array<{ id: string; name: string }>;
+  newItems: Array<Record<string, unknown>>;
+  duplicates: Array<{
+    imported: Record<string, unknown>;
+    existing: Record<string, unknown>;
+  }>;
+}
+
+export interface ImportConfirmResult {
+  created: number;
+  updated: number;
+  skipped: number;
+}
+
+export const dataApi = {
+  /** Export literature data as a ZIP file. Returns a Blob. */
+  exportData: async (category?: string): Promise<Blob> => {
+    const url = category
+      ? `${API_BASE}/api/data/export?category=${encodeURIComponent(category)}`
+      : `${API_BASE}/api/data/export`;
+    const token = getAuthToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const response = await fetch(url, { headers });
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      throw new Error(`Export failed: ${body || response.statusText}`);
+    }
+    return response.blob();
+  },
+
+  /** Preview import from a ZIP file. Returns new/duplicate analysis. */
+  importPreview: async (file: File): Promise<ImportPreviewResult> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = `${API_BASE}/api/data/import`;
+    const token = getAuthToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      throw new Error(`Import preview failed: ${body || response.statusText}`);
+    }
+    return response.json();
+  },
+
+  /** Confirm and execute the import. */
+  confirmImport: async (
+    file: File,
+    data: {
+      newItems: Array<Record<string, unknown>>;
+      duplicates: Array<{
+        imported: Record<string, unknown>;
+        existingId: string;
+        action: 'skip' | 'overwrite';
+      }>;
+    },
+  ): Promise<ImportConfirmResult> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('data', JSON.stringify(data));
+
+    const url = `${API_BASE}/api/data/import/confirm`;
+    const token = getAuthToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      throw new Error(`Import confirm failed: ${body || response.statusText}`);
+    }
+    return response.json();
+  },
+};
+
+// ============================================================
 // Auth API
 // ============================================================
 

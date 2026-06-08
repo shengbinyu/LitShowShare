@@ -8,6 +8,7 @@ import LiteratureDetail from '@/pages/LiteratureDetail'
 import Import from '@/pages/Import'
 import Login from '@/pages/Login'
 import AdminUsers from '@/pages/AdminUsers'
+import DataManagement from '@/pages/DataManagement'
 
 /**
  * Route guard: redirect unauthenticated users to /login.
@@ -67,6 +68,14 @@ export default function App() {
               element={
                 <RequireAuth>
                   <AdminUsers />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/data-management"
+              element={
+                <RequireAuth>
+                  <DataManagement />
                 </RequireAuth>
               }
             />

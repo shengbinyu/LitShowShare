@@ -10,6 +10,7 @@ import tagsRouter from './routes/tags.js';
 import externalLinksRouter from './routes/externalLinks.js';
 import uploadRouter from './routes/upload.js';
 import authRouter from './routes/auth.js';
+import dataManagementRouter from './routes/dataManagement.js';
 import { authenticate } from './middleware/auth.js';
 
 // Resolve directory name for ESM compatibility
@@ -44,6 +45,7 @@ app.use('/api/categories', categoriesRouter);
 app.use('/api/tags', tagsRouter);
 app.use('/api/external-links', externalLinksRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/data', dataManagementRouter);
 
 // In production, serve the frontend static files built by Vite
 if (isProduction) {
