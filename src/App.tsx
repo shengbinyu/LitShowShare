@@ -9,6 +9,7 @@ import Import from '@/pages/Import'
 import Login from '@/pages/Login'
 import AdminUsers from '@/pages/AdminUsers'
 import DataManagement from '@/pages/DataManagement'
+import Help from '@/pages/Help'
 
 /**
  * Route guard: redirect unauthenticated users to /login.
@@ -53,6 +54,7 @@ export default function App() {
             {/* Public routes */}
             <Route path="/" element={<Home />} />
             <Route path="/literature/:id" element={<LiteratureDetail />} />
+            <Route path="/help" element={<Help />} />
 
             {/* Protected routes */}
             <Route

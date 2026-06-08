@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useLiteratureStore } from '@/store/literatureStore'
 import { useAuthStore } from '@/store/authStore'
 import { useTranslation } from '@/i18n/LanguageContext'
-import { Menu, X, BookOpen, Plus, Search, Languages, Sun, Moon, User, LogOut, Users, LogIn, Database } from 'lucide-react'
+import { Menu, X, BookOpen, Plus, Search, Languages, Sun, Moon, User, LogOut, Users, LogIn, Database, HelpCircle } from 'lucide-react'
 import { useTheme } from '@/hooks/useTheme'
 import CategoryNav from '@/components/CategoryNav'
 import type { Language } from '@/i18n/translations'
@@ -97,6 +97,18 @@ export default function Layout() {
 
           {/* Right: Theme toggle + Language switch + Import button */}
           <div className="flex items-center gap-2">
+            {/* Help button */}
+            <Link
+              to="/help"
+              className="flex items-center gap-1.5 rounded-lg border theme-border-primary
+                         px-3 py-2 text-xs font-medium theme-text-secondary
+                         hover:theme-border-focus hover:theme-text-primary transition-colors"
+              title={t('nav.help')}
+            >
+              <HelpCircle size={14} />
+              <span className="hidden lg:inline">{t('nav.help')}</span>
+            </Link>
+
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
