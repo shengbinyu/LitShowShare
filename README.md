@@ -93,7 +93,61 @@ npm start
 
 ### Deployment
 
+#### 方式 A：systemd + Nginx（裸机部署）
+
 See `deploy/deploy.sh` for the automated deployment script using systemd and Nginx reverse proxy.
+
+#### 方式 B：GitHub Actions → 阿里云 ACR → 阿里云 ECS（推荐）
+
+代码推送到 `main` / `master`（或打 `v*.*.*` tag）后，由 [.github/workflows/docker-publish.yml](.github/workflows/docker-publish.yml) 自动完成：
+
+1. **build-and-push**：在 GitHub Runner 上构建多架构镜像并推送到阿里云 ACR
+2. **deploy-to-ecs**：通过 SSH 登录 ECS，执行 `docker compose pull && docker compose up -d`，并做健康校验
+
+ECS 端首次准备（一次性，**以 root 运行**）：
+
+```bash
+# 上传仓库或 git clone 后，在仓库根目录执行：
+sudo bash deploy/ecs-bootstrap.sh --repo https://github.com/<your-user>/LitShowShare.git
+# 上述脚本会自动：
+#   - 安装 Docker CE + compose plugin（阿里云源）
+#   - 创建非 root 用户 deploy（uid/gid 1000），加入 docker 组，禁用密码登录
+#   - 把 /opt/litshowshare 及 .env / docker-compose.yml 的属主交给 deploy
+# 然后编辑 /opt/litshowshare/.env，填入 IMAGE_REGISTRY / IMAGE_NAMESPACE / IMAGE_NAME
+```
+
+为 GitHub Actions 生成专用 SSH 密钥（**以 deploy 用户**，绝不复用个人 key）：
+
+```bash
+sudo -u deploy ssh-keygen -t ed25519 -N '' -C github-actions \
+  -f /home/deploy/.ssh/gha_deploy
+sudo -u deploy sh -c 'cat /home/deploy/.ssh/gha_deploy.pub >> /home/deploy/.ssh/authorized_keys'
+sudo cat /home/deploy/.ssh/gha_deploy   # 整段（含 BEGIN/END）粘到 GitHub Secret ECS_SSH_KEY
+```
+
+需要在 GitHub 仓库 **Settings → Secrets and variables → Actions** 中配置：
+
+| Secret 名 | 用途 | 使用阶段 |
+| --- | --- | --- |
+| `ACR_REGISTRY` | 阿里云 ACR 地址，如 `registry.cn-hangzhou.aliyuncs.com` | build & deploy |
+| `ACR_NAMESPACE` | ACR 命名空间 | build |
+| `ACR_IMAGE` | 镜像名（如 `litshowshare`） | build |
+| `ACR_USERNAME` | ACR push 账号 | build |
+| `ACR_PASSWORD` | ACR push 密码 | build |
+| `ECS_HOST` | ECS 公网 IP 或域名 | deploy |
+| `ECS_USER` | SSH 登录用户，**填 `deploy`**（非 root） | deploy |
+| `ECS_PORT` | SSH 端口（可选，默认 22） | deploy |
+| `ECS_SSH_KEY` | `deploy` 用户私钥（PEM 格式） | deploy |
+
+> ACR 仓库当前为 **公开仓库**，ECS 端 `docker compose pull` 无需 `docker login`。
+> 如未来切回私有仓库，需要在 deploy 步骤前补充 `docker login` 并把 `ACR_USERNAME` / `ACR_PASSWORD` 一并传给 deploy job。
+
+回滚方式：在 ECS 上指定历史 tag 即可：
+
+```bash
+cd /opt/litshowshare
+IMAGE_TAG=<git-short-sha-or-v-tag> docker compose up -d
+```
 
 ## API Overview
 

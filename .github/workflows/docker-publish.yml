@@ -81,6 +81,7 @@ jobs:
           provenance: false
 
       - name: Image summary
+        id: summary
         run: |
           {
             echo "### Image pushed to Aliyun ACR"
@@ -88,3 +89,88 @@ jobs:
             echo "- \`${{ steps.meta.outputs.image_full }}:${{ steps.meta.outputs.primary_tag }}\`"
             echo "- \`${{ steps.meta.outputs.image_full }}:${{ steps.meta.outputs.short_sha }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
+
+    outputs:
+      image_full: ${{ steps.meta.outputs.image_full }}
+      primary_tag: ${{ steps.meta.outputs.primary_tag }}
+      short_sha: ${{ steps.meta.outputs.short_sha }}
+
+  # ============================================================
+  # Deploy to Aliyun ECS via SSH.
+  # ACR repo is public, so no docker login is required on ECS.
+  #
+  # Required GitHub Repository Secrets (deploy stage):
+  #   ECS_HOST       ECS public IP or domain
+  #   ECS_USER       SSH login user (e.g. root)
+  #   ECS_SSH_KEY    SSH private key (PEM format)
+  #   ECS_PORT       SSH port (optional, default 22)
+  #
+  # Prerequisite on ECS:
+  #   - Docker & docker compose plugin installed
+  #   - /opt/litshowshare/{docker-compose.yml,.env} ready
+  #     (use deploy/ecs-bootstrap.sh for first-time setup)
+  # ============================================================
+  deploy-to-ecs:
+    name: Deploy to Aliyun ECS
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.ECS_HOST }}
+          username: ${{ secrets.ECS_USER }}
+          key: ${{ secrets.ECS_SSH_KEY }}
+          port: ${{ secrets.ECS_PORT }}
+          envs: IMAGE_TAG,IMAGE_FULL,SHORT_SHA
+          script_stop: true
+          script: |
+            set -euo pipefail
+            APP_DIR=/opt/litshowshare
+
+            # Self-check: deploy user must belong to the docker group, otherwise
+            # 'docker compose' below will fail with permission denied on /var/run/docker.sock
+            if ! id -nG | tr ' ' '\n' | grep -qx docker; then
+              echo "ERROR: current user ($(id -un)) is not in the 'docker' group."
+              echo "Run on ECS: sudo usermod -aG docker $(id -un) && re-login"
+              exit 1
+            fi
+
+            cd "$APP_DIR"
+
+            # Pin the exact tag built by this run, so deploy is reproducible
+            export IMAGE_TAG="${{ needs.build-and-push.outputs.primary_tag }}"
+            echo "Deploying image tag: ${IMAGE_TAG}"
+
+            # Pull the new image (ACR public repo -> no docker login needed)
+            docker compose pull
+
+            # Recreate container with the new image
+            docker compose up -d --remove-orphans
+
+            # Cleanup dangling images to save disk
+            docker image prune -f
+
+            # Wait for healthcheck (max ~60s)
+            echo "Waiting for container to become healthy..."
+            for i in $(seq 1 30); do
+              STATUS=$(docker inspect -f '{{.State.Health.Status}}' litshowshare 2>/dev/null || echo "starting")
+              if [ "$STATUS" = "healthy" ]; then
+                echo "Container is healthy."
+                break
+              fi
+              if [ "$i" = "30" ]; then
+                echo "Container failed to become healthy in time."
+                docker compose logs --tail=100 litshowshare
+                exit 1
+              fi
+              sleep 2
+            done
+
+            # Final HTTP probe against the API
+            HOST_PORT=$(grep -E '^HOST_PORT=' .env 2>/dev/null | cut -d= -f2 || echo 3001)
+            HOST_PORT=${HOST_PORT:-3001}
+            curl -fsS "http://127.0.0.1:${HOST_PORT}/api/auth" >/dev/null \
+              && echo "API probe OK on port ${HOST_PORT}" \
+              || (echo "API probe failed"; docker compose logs --tail=100 litshowshare; exit 1)
