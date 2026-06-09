@@ -6,6 +6,7 @@ import { useLiteratures, useCategories, useTags } from '@/hooks/useLiterature'
 import { useLiteratureStore } from '@/store/literatureStore'
 import { useTranslation } from '@/i18n/LanguageContext'
 import { UNCATEGORY_VALUE, type Literature, type Category } from '@/utils/db'
+import { normalizeAuthorName } from '@/utils/authorUtils'
 import LiteratureCard from '@/components/LiteratureCard'
 import LiteratureListItem from '@/components/LiteratureListItem'
 
@@ -144,9 +145,11 @@ export default function Home() {
       result = result.filter((lit) => lit.tagIds.includes(selectedTag))
     }
 
-    // Apply author filter
+    // Apply author filter (normalize names to match sidebar display)
     if (selectedAuthor) {
-      result = result.filter((lit) => lit.authors.includes(selectedAuthor))
+      result = result.filter((lit) =>
+        lit.authors.some((a) => normalizeAuthorName(a.trim()) === selectedAuthor)
+      )
     }
 
     // Sort

@@ -6,6 +6,7 @@ import { useTranslation } from '@/i18n/LanguageContext'
 import type { Category } from '@/utils/db'
 import type { Literature } from '@/utils/db'
 import { UNCATEGORY_VALUE } from '@/utils/db'
+import { normalizeAuthorName } from '@/utils/authorUtils'
 import { FolderOpen, Hash, Plus, Pencil, Trash2, X, Check, Settings2, PenLine } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 
@@ -315,10 +316,17 @@ export default function CategoryNav() {
   const rankedAuthors = useMemo(() => {
     const countByAuthor = new Map<string, number>()
     for (const lit of literatures) {
-      for (const raw of lit.authors) {
-        const name = (raw ?? '').trim()
-        if (!name) continue
-        countByAuthor.set(name, (countByAuthor.get(name) ?? 0) + 1)
+      const n = lit.authors.length
+      if (n === 0) continue
+
+      // Count the first author
+      const first = normalizeAuthorName((lit.authors[0] ?? '').trim())
+      if (first) countByAuthor.set(first, (countByAuthor.get(first) ?? 0) + 1)
+
+      // Count the last author (if different from the first, i.e., n > 1)
+      if (n > 1) {
+        const last = normalizeAuthorName((lit.authors[n - 1] ?? '').trim())
+        if (last) countByAuthor.set(last, (countByAuthor.get(last) ?? 0) + 1)
       }
     }
     const list = Array.from(countByAuthor.entries())

@@ -7,6 +7,7 @@ import {
   uploadApi,
 } from '@/utils/api';
 import type { Literature, ExternalLink, Category, Tag } from '@/utils/db';
+import { queryClient } from '@/main';
 
 // ============================================================
 // Query Keys
@@ -106,6 +107,7 @@ export async function addLiterature(
   lit: Omit<Literature, 'id' | 'createdAt' | 'updatedAt'>,
 ): Promise<string> {
   const result = await literatureApi.create(lit);
+  await queryClient.invalidateQueries({ queryKey: keys.literatures });
   return result.id;
 }
 
@@ -115,11 +117,14 @@ export async function updateLiterature(
   data: Partial<Literature>,
 ): Promise<void> {
   await literatureApi.update(id, data);
+  await queryClient.invalidateQueries({ queryKey: keys.literatures });
+  await queryClient.invalidateQueries({ queryKey: keys.literature(id) });
 }
 
 /** Delete a literature record and all its associated external links. */
 export async function deleteLiterature(id: string): Promise<void> {
   await literatureApi.delete(id);
+  await queryClient.invalidateQueries({ queryKey: keys.literatures });
 }
 
 /** Add an external link to the database. */
@@ -127,12 +132,16 @@ export async function addExternalLink(
   link: Omit<ExternalLink, 'id'>,
 ): Promise<string> {
   const result = await externalLinkApi.create(link);
+  await queryClient.invalidateQueries({ queryKey: keys.externalLinks(link.literatureId) });
   return result.id;
 }
 
 /** Delete an external link by its ID. */
 export async function deleteExternalLink(id: string): Promise<void> {
   await externalLinkApi.delete(id);
+  // Cannot invalidate specific literature's external links without literatureId,
+  // so invalidate all externalLinks queries
+  await queryClient.invalidateQueries({ queryKey: ['externalLinks'] });
 }
 
 /** Batch import multiple literature records into the database. */
@@ -144,6 +153,7 @@ export async function importLiteratures(
     const result = await literatureApi.create(item);
     ids.push(result.id);
   }
+  await queryClient.invalidateQueries({ queryKey: keys.literatures });
   return ids;
 }
 
@@ -158,6 +168,7 @@ export async function addCategory(
   description: string = '',
 ): Promise<string> {
   const result = await categoryApi.create({ name, color, description });
+  await queryClient.invalidateQueries({ queryKey: keys.categories });
   return result.id;
 }
 
@@ -181,6 +192,8 @@ export async function deleteCategory(id: string): Promise<void> {
 /** Add a new tag. */
 export async function addTag(name: string): Promise<string> {
   const result = await tagApi.create(name);
+  await queryClient.invalidateQueries({ queryKey: keys.tags });
+  await queryClient.invalidateQueries({ queryKey: keys.literatures });
   return result.id;
 }
 
@@ -203,6 +216,8 @@ export async function removeTagFromLiterature(
   tagId: string,
 ): Promise<void> {
   await literatureApi.removeTag(literatureId, tagId);
+  await queryClient.invalidateQueries({ queryKey: keys.literatures });
+  await queryClient.invalidateQueries({ queryKey: keys.literature(literatureId) });
 }
 
 // ============================================================

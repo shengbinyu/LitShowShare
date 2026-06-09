@@ -7,6 +7,7 @@
  */
 
 import type { Literature } from '@/utils/db';
+import { normalizeAuthorName } from './authorUtils';
 
 // ============================================================
 // Types
@@ -227,13 +228,14 @@ function mapBibtexEntry(
     return null;
   }
 
-  // Split authors by " and " separator
+  // Split authors by " and " separator, then normalize name format
   const authorStr = cleanValue(fields['author']);
   const authors = authorStr
     ? authorStr
         .split(/\s+and\s+/i)
         .map((a) => a.trim())
         .filter(Boolean)
+        .map(normalizeAuthorName)
     : [];
 
   // Split keywords by semicolons, commas, or newlines

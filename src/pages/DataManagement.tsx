@@ -8,6 +8,7 @@ import {
 import { useCategories, useLiteratures } from '@/hooks/useLiterature'
 import { useTranslation } from '@/i18n/LanguageContext'
 import { dataApi, type ImportPreviewResult } from '@/utils/api'
+import { queryClient } from '@/main'
 
 // ============================================================
 // Types
@@ -248,6 +249,13 @@ export default function DataManagement() {
         newItems: previewData.newItems,
         duplicates,
       })
+
+      // Invalidate all relevant caches so the UI updates immediately
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['literatures'] }),
+        queryClient.invalidateQueries({ queryKey: ['categories'] }),
+        queryClient.invalidateQueries({ queryKey: ['tags'] }),
+      ])
 
       setImportResult(result)
       setImportStep('done')

@@ -5,7 +5,7 @@ import App from './App'
 import './index.css'
 
 // React Query client with default options
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 30_000, // 30 seconds before refetch

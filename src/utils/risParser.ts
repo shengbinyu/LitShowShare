@@ -1,4 +1,5 @@
 import type { Literature } from '@/utils/db';
+import { normalizeAuthorName } from './authorUtils';
 
 // ============================================================
 // RIS Parser
@@ -83,13 +84,13 @@ function parseRisRecord(
     return null;
   }
 
-  // Collect authors from all author-related tags
+  // Collect authors from all author-related tags and normalize to "First Last"
   const authorTags = ['AU', 'A1', 'A2', 'A3', 'A4'];
   const authors: string[] = [];
   for (const tag of authorTags) {
     const values = tagValues.get(tag);
     if (values) {
-      authors.push(...values);
+      authors.push(...values.map(normalizeAuthorName));
     }
   }
 
