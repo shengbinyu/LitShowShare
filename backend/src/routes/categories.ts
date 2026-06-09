@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../db.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.get('/', (_req: Request, res: Response) => {
  * POST / - Create a new category
  * Generates a UUID for the new category.
  */
-router.post('/', (req: Request, res: Response) => {
+router.post('/', authenticate, (req: Request, res: Response) => {
   try {
     const id = uuidv4();
     const { name = '', color = '', description = '' } = req.body;
@@ -41,7 +42,7 @@ router.post('/', (req: Request, res: Response) => {
 /**
  * PUT /:id - Update an existing category
  */
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', authenticate, (req: Request, res: Response) => {
   try {
     const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id);
     if (!existing) {
@@ -71,7 +72,7 @@ router.put('/:id', (req: Request, res: Response) => {
 /**
  * DELETE /:id - Delete a category
  */
-router.delete('/:id', (req: Request, res: Response) => {
+router.delete('/:id', authenticate, (req: Request, res: Response) => {
   try {
     const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id);
     if (!existing) {

@@ -10,6 +10,7 @@ interface LiteratureStore {
   searchQuery: string
   selectedCategory: string | null
   selectedTag: string | null
+  selectedAuthor: string | null
   sortBy: 'date' | 'title' | 'createdAt'
   sortOrder: 'asc' | 'desc'
   sidebarOpen: boolean
@@ -18,6 +19,7 @@ interface LiteratureStore {
   setSearchQuery: (query: string) => void
   setSelectedCategory: (category: string | null) => void
   setSelectedTag: (tag: string | null) => void
+  setSelectedAuthor: (author: string | null) => void
   setSortBy: (sort: 'date' | 'title' | 'createdAt') => void
   setSortOrder: (order: 'asc' | 'desc') => void
   toggleSidebar: () => void
@@ -30,6 +32,7 @@ const initialState = {
   searchQuery: '',
   selectedCategory: null as string | null,
   selectedTag: null as string | null,
+  selectedAuthor: null as string | null,
   sortBy: 'createdAt' as const,
   sortOrder: 'desc' as const,
   sidebarOpen: true,
@@ -49,6 +52,8 @@ export const useLiteratureStore = create<LiteratureStore>((set) => ({
 
   setSelectedTag: (tag) => set({ selectedTag: tag }),
 
+  setSelectedAuthor: (author) => set({ selectedAuthor: author }),
+
   setSortBy: (sort) => set({ sortBy: sort }),
 
   setSortOrder: (order) => set({ sortOrder: order }),
@@ -63,6 +68,7 @@ export const useLiteratureStore = create<LiteratureStore>((set) => ({
       searchQuery: initialState.searchQuery,
       selectedCategory: initialState.selectedCategory,
       selectedTag: initialState.selectedTag,
+      selectedAuthor: initialState.selectedAuthor,
       sortBy: initialState.sortBy,
       sortOrder: initialState.sortOrder,
     }),

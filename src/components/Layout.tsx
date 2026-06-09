@@ -141,8 +141,8 @@ export default function Layout() {
               <span className="hidden sm:inline">{t('nav.import')}</span>
             </Link>
 
-            {/* Data Management button */}
-            {isAuthenticated && (
+            {/* Data Management button (admin only) */}
+            {isAdmin && (
               <Link
                 to="/data-management"
                 className="flex items-center gap-1.5 rounded-lg border theme-border-primary px-3 py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"

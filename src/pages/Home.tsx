@@ -110,7 +110,7 @@ export default function Home() {
   const literatures = useLiteratures()
   const categories = useCategories()
   const tags = useTags()
-  const { searchQuery, selectedCategory, selectedTag, sortBy, sortOrder, resetFilters } =
+  const { searchQuery, selectedCategory, selectedTag, selectedAuthor, sortBy, sortOrder, resetFilters } =
     useLiteratureStore()
   const { t } = useTranslation()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
@@ -144,6 +144,11 @@ export default function Home() {
       result = result.filter((lit) => lit.tagIds.includes(selectedTag))
     }
 
+    // Apply author filter
+    if (selectedAuthor) {
+      result = result.filter((lit) => lit.authors.includes(selectedAuthor))
+    }
+
     // Sort
     result = [...result].sort((a, b) => {
       const cmp = compareLit(a, b, sortBy)
@@ -151,7 +156,7 @@ export default function Home() {
     })
 
     return result
-  }, [literatures, searchQuery, selectedCategory, selectedTag, sortBy, sortOrder])
+  }, [literatures, searchQuery, selectedCategory, selectedTag, selectedAuthor, sortBy, sortOrder])
 
   // Determine which empty state to show
   const isLibraryEmpty = literatures.length === 0

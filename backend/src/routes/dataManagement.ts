@@ -7,7 +7,7 @@ import { ZipArchive } from 'archiver';
 import AdmZip from 'adm-zip';
 import multer from 'multer';
 import db from '../db.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -71,7 +71,7 @@ function parseLiteratureFields(row: Record<string, unknown>) {
 // GET /export - Export literature data as a ZIP archive
 // ============================================================
 
-router.get('/export', authenticate, (req: Request, res: Response) => {
+router.get('/export', authenticate, requireAdmin, (req: Request, res: Response) => {
   try {
     const category = req.query.category as string | undefined;
 
@@ -167,7 +167,7 @@ router.get('/export', authenticate, (req: Request, res: Response) => {
 // POST /import - Preview import from a ZIP archive
 // ============================================================
 
-router.post('/import', authenticate, upload.single('file'), (req: Request, res: Response) => {
+router.post('/import', authenticate, requireAdmin, upload.single('file'), (req: Request, res: Response) => {
   const tempFilePath = req.file?.path;
   try {
     if (!req.file) {
@@ -254,7 +254,7 @@ interface ConfirmImportBody {
   zipFileBase64: string;
 }
 
-router.post('/import/confirm', authenticate, upload.single('file'), (req: Request, res: Response) => {
+router.post('/import/confirm', authenticate, requireAdmin, upload.single('file'), (req: Request, res: Response) => {
   const tempFilePath = req.file?.path;
   try {
     if (!req.file) {

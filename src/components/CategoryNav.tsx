@@ -1,12 +1,12 @@
-import { useState } from 'react'
-import { useCategories, useLiteratures, useTags, addCategory, updateCategory, deleteCategory } from '@/hooks/useLiterature'
+import { useState, useMemo } from 'react'
+import { useCategories, useLiteratures, addCategory, updateCategory, deleteCategory } from '@/hooks/useLiterature'
 import { useLiteratureStore } from '@/store/literatureStore'
+import { useAuthStore } from '@/store/authStore'
 import { useTranslation } from '@/i18n/LanguageContext'
 import type { Category } from '@/utils/db'
 import type { Literature } from '@/utils/db'
-import type { Tag } from '@/utils/db'
 import { UNCATEGORY_VALUE } from '@/utils/db'
-import { FolderOpen, Hash, Plus, Pencil, Trash2, X, Check, Settings2, Tag as TagIcon } from 'lucide-react'
+import { FolderOpen, Hash, Plus, Pencil, Trash2, X, Check, Settings2, PenLine } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 
 // ============================================================
@@ -16,6 +16,79 @@ import { motion, AnimatePresence } from 'motion/react'
 const COLOR_PRESETS = [
   '#3b82f6', '#8b5cf6', '#ef4444', '#f97316', '#22c55e',
   '#14b8a6', '#6366f1', '#eab308', '#ec4899', '#06b6d4',
+]
+
+// ============================================================
+// Author cloud tuning constants
+// ============================================================
+
+/** Maximum number of authors to render in the sidebar cloud. */
+const MAX_AUTHORS = 40
+
+/**
+ * Visual tier specs for the author cloud — tier 4 is the most prominent,
+ * tier 0 is the most subdued. The look intentionally mimics an editorial
+ * "byline index" rather than a generic rounded tag-pill cloud.
+ */
+const AUTHOR_TIER_STYLES: Array<{
+  font: string
+  weight: string
+  tracking: string
+  text: string
+  textActive: string
+  family: string
+  showCount: boolean
+}> = [
+  // tier 0 — rarely seen authors, smallest & most subdued
+  {
+    font: 'text-[11px]',
+    weight: 'font-normal',
+    tracking: 'tracking-[0.08em] uppercase',
+    text: 'theme-text-muted',
+    textActive: 'text-gold-500',
+    family: 'font-body',
+    showCount: false,
+  },
+  // tier 1
+  {
+    font: 'text-sm',
+    weight: 'font-normal',
+    tracking: 'tracking-[0.02em]',
+    text: 'theme-text-secondary',
+    textActive: 'text-gold-500',
+    family: 'font-body',
+    showCount: false,
+  },
+  // tier 2 — baseline / single-occurrence fallback
+  {
+    font: 'text-base',
+    weight: 'font-medium',
+    tracking: 'tracking-normal',
+    text: 'theme-text-primary',
+    textActive: 'text-gold-500',
+    family: 'font-display',
+    showCount: false,
+  },
+  // tier 3
+  {
+    font: 'text-xl',
+    weight: 'font-semibold',
+    tracking: 'tracking-[-0.01em]',
+    text: 'theme-text-heading',
+    textActive: 'text-gold-400',
+    family: 'font-display',
+    showCount: true,
+  },
+  // tier 4 — most prominent author(s)
+  {
+    font: 'text-2xl',
+    weight: 'font-bold',
+    tracking: 'tracking-[-0.02em]',
+    text: 'text-gold-500',
+    textActive: 'text-gold-400',
+    family: 'font-display',
+    showCount: true,
+  },
 ]
 
 // ============================================================
@@ -197,20 +270,29 @@ function CategoryDialog({ categories, onClose }: CategoryDialogProps) {
  * CategoryNav - Sidebar navigation for literature categories.
  * Displays all categories with colored indicators and literature counts.
  * Supports selecting a category to filter the main view,
- * and managing categories (add/edit/delete).
+ * and managing categories (add/edit/delete, login required).
+ *
+ * Also renders an editorial-style author cloud below the categories,
+ * where authors who appear more often are rendered with a larger
+ * display-serif typography for stronger visual weight.
  */
 export default function CategoryNav() {
   const categories = useCategories()
   const literatures = useLiteratures()
-  const tags = useTags()
-  const { selectedCategory, setSelectedCategory, selectedTag, setSelectedTag } = useLiteratureStore()
+  const {
+    selectedCategory,
+    setSelectedCategory,
+    selectedAuthor,
+    setSelectedAuthor,
+  } = useLiteratureStore()
+  const { isAuthenticated } = useAuthStore()
   const { t } = useTranslation()
   const [dialogOpen, setDialogOpen] = useState(false)
 
   // Count literatures per category
   const countByCategory = literatures.reduce<Record<string, number>>(
     (acc, lit: Literature) => {
-      acc[lit.category] = (acc[lit.category] || 0) + 1
+      acc[lit.category ?? ''] = (acc[lit.category ?? ''] || 0) + 1
       return acc
     },
     {}
@@ -226,32 +308,61 @@ export default function CategoryNav() {
     (cat: Category) => (countByCategory[cat.name] || 0) > 0
   ).length
 
-  // Count literatures per tag (by tag id)
-  const countByTagId = literatures.reduce<Record<string, number>>(
-    (acc, lit: Literature) => {
-      for (const tagId of lit.tagIds) {
-        acc[tagId] = (acc[tagId] || 0) + 1
+  // ----------------------------------------------------------------
+  // Author cloud: aggregate authors across literatures and assign
+  // a visual "tier" based on relative occurrence count.
+  // ----------------------------------------------------------------
+  const rankedAuthors = useMemo(() => {
+    const countByAuthor = new Map<string, number>()
+    for (const lit of literatures) {
+      for (const raw of lit.authors) {
+        const name = (raw ?? '').trim()
+        if (!name) continue
+        countByAuthor.set(name, (countByAuthor.get(name) ?? 0) + 1)
       }
-      return acc
-    },
-    {}
-  )
+    }
+    const list = Array.from(countByAuthor.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+      .slice(0, MAX_AUTHORS)
+
+    if (list.length === 0) {
+      return { items: [] as Array<{ name: string; count: number; tier: number }> }
+    }
+    const max = list[0].count
+    const min = list[list.length - 1].count
+    const span = max - min
+
+    const items = list.map(({ name, count }) => {
+      let tier: number
+      if (span === 0) {
+        // All authors share the same count — fallback to the baseline tier
+        tier = 2
+      } else {
+        tier = Math.round(((count - min) / span) * (AUTHOR_TIER_STYLES.length - 1))
+      }
+      return { name, count, tier }
+    })
+    return { items }
+  }, [literatures])
 
   return (
     <>
       <nav className="flex flex-col gap-1 px-3 py-4">
-        {/* Section title + manage button */}
+        {/* Section title + manage button (manage only visible to logged-in users) */}
         <div className="flex items-center justify-between px-3 mb-2">
           <h3 className="font-display text-sm font-semibold uppercase tracking-wider theme-text-muted">
             {t('sidebar.categories')}
           </h3>
-          <button
-            onClick={() => setDialogOpen(true)}
-            className="rounded-lg p-1.5 theme-text-muted hover:theme-bg-hover hover:text-gold-500 transition-colors"
-            title={t('sidebar.manage')}
-          >
-            <Settings2 className="h-4 w-4" />
-          </button>
+          {isAuthenticated && (
+            <button
+              onClick={() => setDialogOpen(true)}
+              className="rounded-lg p-1.5 theme-text-muted hover:theme-bg-hover hover:text-gold-500 transition-colors"
+              title={t('sidebar.manage')}
+            >
+              <Settings2 className="h-4 w-4" />
+            </button>
+          )}
         </div>
 
         {/* "All Literature" entry */}
@@ -353,45 +464,76 @@ export default function CategoryNav() {
           </div>
         </div>
 
-        {/* Tags section */}
-        <div className="mt-4 px-3 pt-3 border-t theme-border-primary">
-          {/* Section title */}
-          <div className="flex items-center gap-2 mb-3">
-            <TagIcon size={14} className="theme-text-muted" />
-            <h3 className="font-display text-sm font-semibold uppercase tracking-wider theme-text-muted">
-              {t('sidebar.tags')}
+        {/* ============================================================ */}
+        {/* Authors section — editorial-style ranked byline cloud         */}
+        {/* ============================================================ */}
+        <section className="mt-6 px-3 pt-4 border-t theme-border-primary">
+          {/* Title row with icon */}
+          <div className="flex items-center gap-2 mb-1">
+            <PenLine size={14} className="text-gold-500/80" />
+            <h3 className="font-display text-sm font-semibold uppercase tracking-[0.18em] theme-text-muted">
+              {t('sidebar.authors')}
             </h3>
           </div>
+          {/* Editorial accent: small gold rule + italic byline */}
+          <span className="block h-px w-8 bg-gold-500/50 mb-2" />
+          <p className="font-body text-[11px] italic theme-text-muted mb-4">
+            {t('sidebar.byline')}
+          </p>
 
-          {/* Tag list */}
-          {tags.length === 0 ? (
-            <p className="text-xs theme-text-muted italic">{t('sidebar.noTags')}</p>
+          {rankedAuthors.items.length === 0 ? (
+            <p className="text-xs theme-text-muted italic">{t('sidebar.noAuthors')}</p>
           ) : (
-            <div className="flex flex-wrap gap-1.5">
-              {tags.map((tag: Tag) => {
-                const count = countByTagId[tag.id] || 0
-                const isActive = selectedTag === tag.id
-
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5"
+            >
+              {rankedAuthors.items.map(({ name, count, tier }, index) => {
+                const spec = AUTHOR_TIER_STYLES[tier] ?? AUTHOR_TIER_STYLES[2]
+                const isActive = selectedAuthor === name
                 return (
-                  <button
-                    key={tag.id}
-                    onClick={() => setSelectedTag(isActive ? null : tag.id)}
-                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors duration-200 ${
-                      isActive
-                        ? 'theme-accent-subtle-bg text-gold-500 font-medium ring-1 ring-gold-500/30'
-                        : 'theme-bg-input theme-text-secondary hover:theme-bg-hover hover:theme-text-primary'
-                    }`}
+                  <motion.button
+                    key={name}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, delay: Math.min(index * 0.02, 0.6) }}
+                    onClick={() => setSelectedAuthor(isActive ? null : name)}
+                    aria-pressed={isActive}
+                    title={`${name} (${count})`}
+                    className={[
+                      'group relative inline-flex items-baseline leading-tight',
+                      'transition-colors duration-200',
+                      'hover:text-gold-400 focus:outline-none focus-visible:text-gold-400',
+                      spec.font,
+                      spec.weight,
+                      spec.tracking,
+                      spec.family,
+                      isActive ? spec.textActive : spec.text,
+                    ].join(' ')}
                   >
-                    <span>{tag.name}</span>
-                    <span className={`tabular-nums ${isActive ? 'text-gold-500/70' : 'theme-text-muted'}`}>
-                      {count}
+                    <span
+                      className={[
+                        'border-b transition-colors duration-200',
+                        isActive
+                          ? 'border-gold-500'
+                          : 'border-transparent group-hover:border-gold-500/40',
+                      ].join(' ')}
+                    >
+                      {name}
                     </span>
-                  </button>
+                    {spec.showCount && (
+                      <sup className="ml-0.5 text-[10px] tabular-nums text-gold-500/70 font-body not-italic">
+                        ×{count}
+                      </sup>
+                    )}
+                  </motion.button>
                 )
               })}
-            </div>
+            </motion.div>
           )}
-        </div>
+        </section>
       </nav>
 
       {/* Category management dialog */}

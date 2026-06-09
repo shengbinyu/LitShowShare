@@ -13,12 +13,30 @@ import Help from '@/pages/Help'
 
 /**
  * Route guard: redirect unauthenticated users to /login.
- * Used to protect Import and Admin pages while Home/Detail stay public.
+ * Used to protect Import page while Home/Detail stay public.
  */
 function RequireAuth({ children }: { children: ReactElement }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
+  }
+  return children
+}
+
+/**
+ * Admin-only route guard.
+ * - Unauthenticated users are sent to /login.
+ * - Authenticated non-admin users are sent back to the home page.
+ * Used to protect Admin Users and Data Management pages.
+ */
+function RequireAdmin({ children }: { children: ReactElement }) {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isAdmin = useAuthStore((s) => s.isAdmin)
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+  if (!isAdmin) {
+    return <Navigate to="/" replace />
   }
   return children
 }
@@ -68,17 +86,17 @@ export default function App() {
             <Route
               path="/admin/users"
               element={
-                <RequireAuth>
+                <RequireAdmin>
                   <AdminUsers />
-                </RequireAuth>
+                </RequireAdmin>
               }
             />
             <Route
               path="/data-management"
               element={
-                <RequireAuth>
+                <RequireAdmin>
                   <DataManagement />
-                </RequireAuth>
+                </RequireAdmin>
               }
             />
           </Route>

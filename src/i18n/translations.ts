@@ -28,6 +28,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'sidebar.uncategorized': 'Uncategorized',
     'sidebar.tags': 'Tags',
     'sidebar.noTags': 'No tags yet',
+    'sidebar.authors': 'Authors',
+    'sidebar.byline': 'Ranked by frequency',
+    'sidebar.noAuthors': 'No authors yet',
 
     // Home / Library
     'home.literatureLibrary': 'Literature Library',
@@ -76,6 +79,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'detail.loginToViewPdf': 'Log in to view the PDF',
     'detail.loginToViewCloudLink': 'Log in to view the full-text link',
     'detail.loginNow': 'Log in',
+    'detail.save': 'Save',
+    'detail.cancel': 'Cancel',
 
     // Import Page
     'import.title': 'Import Literature',
@@ -366,6 +371,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'sidebar.uncategorized': '未分类',
     'sidebar.tags': '标签',
     'sidebar.noTags': '暂无标签',
+    'sidebar.authors': '作者',
+    'sidebar.byline': '按出现频次排列',
+    'sidebar.noAuthors': '暂无作者',
 
     // Home / Library
     'home.literatureLibrary': '文献库',
@@ -418,6 +426,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'detail.loginToViewPdf': '登录后可查看 PDF',
     'detail.loginToViewCloudLink': '登录后可查看全文链接',
     'detail.loginNow': '立即登录',
+    'detail.save': '保存',
+    'detail.cancel': '取消',
 
     // Import Page
     'import.title': '导入文献',
