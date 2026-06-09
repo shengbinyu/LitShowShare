@@ -5,12 +5,20 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
 
+/** Row shape returned by SELECT * FROM categories */
+interface CategoryRow {
+  id: string;
+  name: string;
+  color: string;
+  description: string;
+}
+
 /**
  * GET / - Retrieve all categories
  */
 router.get('/', (_req: Request, res: Response) => {
   try {
-    const categories = db.prepare('SELECT * FROM categories').all();
+    const categories = db.prepare('SELECT * FROM categories').all() as CategoryRow[];
     res.json(categories);
   } catch (err) {
     console.error('[Categories] Failed to fetch all:', err);
@@ -31,7 +39,7 @@ router.post('/', authenticate, (req: Request, res: Response) => {
       id, name, color, description
     );
 
-    const category = db.prepare('SELECT * FROM categories WHERE id = ?').get(id);
+    const category = db.prepare('SELECT * FROM categories WHERE id = ?').get(id) as CategoryRow | undefined;
     res.status(201).json(category);
   } catch (err) {
     console.error('[Categories] Failed to create:', err);
@@ -44,7 +52,7 @@ router.post('/', authenticate, (req: Request, res: Response) => {
  */
 router.put('/:id', authenticate, (req: Request, res: Response) => {
   try {
-    const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id);
+    const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id) as CategoryRow | undefined;
     if (!existing) {
       res.status(404).json({ error: 'Category not found' });
       return;
@@ -52,16 +60,16 @@ router.put('/:id', authenticate, (req: Request, res: Response) => {
 
     const { name, color, description } = req.body;
     const updated = {
-      name: name ?? (existing as any).name,
-      color: color ?? (existing as any).color,
-      description: description ?? (existing as any).description,
+      name: name ?? existing.name,
+      color: color ?? existing.color,
+      description: description ?? existing.description,
     };
 
     db.prepare('UPDATE categories SET name = ?, color = ?, description = ? WHERE id = ?').run(
       updated.name, updated.color, updated.description, req.params.id
     );
 
-    const category = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id);
+    const category = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id) as CategoryRow | undefined;
     res.json(category);
   } catch (err) {
     console.error('[Categories] Failed to update:', err);
@@ -74,7 +82,7 @@ router.put('/:id', authenticate, (req: Request, res: Response) => {
  */
 router.delete('/:id', authenticate, (req: Request, res: Response) => {
   try {
-    const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id);
+    const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id) as CategoryRow | undefined;
     if (!existing) {
       res.status(404).json({ error: 'Category not found' });
       return;

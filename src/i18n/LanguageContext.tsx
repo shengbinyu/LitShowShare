@@ -55,6 +55,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 /**
  * Hook to access translations and language controls.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTranslation(): LanguageContextValue {
   const ctx = useContext(LanguageContext)
   if (!ctx) {

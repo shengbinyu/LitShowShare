@@ -2,7 +2,19 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../db.js';
 
+/** Partial row shape for SELECT id, tagIds FROM literatures */
+interface LiteraturesTagIdRow {
+  id: string;
+  tagIds: string;
+}
+
 const router = Router();
+
+/** Partial row shape for SELECT id, tagIds FROM literatures */
+interface LiteraturesTagIdRow {
+  id: string;
+  tagIds: string;
+}
 
 /**
  * GET / - Retrieve all tags
@@ -60,7 +72,7 @@ router.delete('/:id', (req: Request, res: Response) => {
     }
 
     // Remove this tagId from all literatures that reference it
-    const literatures = db.prepare('SELECT id, tagIds FROM literatures').all() as any[];
+    const literatures = db.prepare('SELECT id, tagIds FROM literatures').all() as LiteraturesTagIdRow[];
     const updateStmt = db.prepare('UPDATE literatures SET tagIds = ?, updatedAt = ? WHERE id = ?');
     const now = new Date().toISOString();
 

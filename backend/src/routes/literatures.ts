@@ -6,6 +6,30 @@ import { fileURLToPath } from 'url';
 import db from '../db.js';
 import { authenticate } from '../middleware/auth.js';
 
+interface LiteratureRow {
+  id: string;
+  title: string;
+  authors: string;
+  abstract: string;
+  keywords: string;
+  publishDate: string;
+  category: string | null;
+  doi: string;
+  journal: string;
+  volume: string;
+  number: string;
+  pages: string;
+  publisher: string;
+  sourceFormat: string;
+  pdfPath: string;
+  pdfFileName: string;
+  cloudLink: string;
+  tagIds: string;
+  uploadedBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const router = Router();
 
 /**
@@ -141,7 +165,7 @@ router.put('/:id', authenticate, (req: Request, res: Response) => {
     }
 
     // Permission check: only uploader or admin can update
-    if (!canModifyLiterature(req, existing as any)) {
+    if (!canModifyLiterature(req, existing as LiteratureRow)) {
       res.status(403).json({ error: 'You do not have permission to modify this literature' });
       return;
     }
@@ -151,23 +175,23 @@ router.put('/:id', authenticate, (req: Request, res: Response) => {
 
     // Merge existing values with the update payload
     const updated = {
-      title: body.title ?? (existing as any).title,
-      authors: JSON.stringify(body.authors ?? JSON.parse((existing as any).authors)),
-      abstract: body.abstract ?? (existing as any).abstract,
-      keywords: JSON.stringify(body.keywords ?? JSON.parse((existing as any).keywords)),
-      publishDate: body.publishDate ?? (existing as any).publishDate,
-      category: body.category !== undefined ? body.category : (existing as any).category,
-      doi: body.doi ?? (existing as any).doi,
-      journal: body.journal ?? (existing as any).journal,
-      volume: body.volume ?? (existing as any).volume,
-      number: body.number ?? (existing as any).number,
-      pages: body.pages ?? (existing as any).pages,
-      publisher: body.publisher ?? (existing as any).publisher,
-      sourceFormat: body.sourceFormat ?? (existing as any).sourceFormat,
-      pdfPath: body.pdfPath ?? (existing as any).pdfPath,
-      pdfFileName: body.pdfFileName ?? (existing as any).pdfFileName,
-      cloudLink: body.cloudLink ?? (existing as any).cloudLink,
-      tagIds: JSON.stringify(body.tagIds ?? JSON.parse((existing as any).tagIds)),
+      title: body.title ?? (existing as LiteratureRow).title,
+      authors: JSON.stringify(body.authors ?? JSON.parse((existing as LiteratureRow).authors)),
+      abstract: body.abstract ?? (existing as LiteratureRow).abstract,
+      keywords: JSON.stringify(body.keywords ?? JSON.parse((existing as LiteratureRow).keywords)),
+      publishDate: body.publishDate ?? (existing as LiteratureRow).publishDate,
+      category: body.category !== undefined ? body.category : (existing as LiteratureRow).category,
+      doi: body.doi ?? (existing as LiteratureRow).doi,
+      journal: body.journal ?? (existing as LiteratureRow).journal,
+      volume: body.volume ?? (existing as LiteratureRow).volume,
+      number: body.number ?? (existing as LiteratureRow).number,
+      pages: body.pages ?? (existing as LiteratureRow).pages,
+      publisher: body.publisher ?? (existing as LiteratureRow).publisher,
+      sourceFormat: body.sourceFormat ?? (existing as LiteratureRow).sourceFormat,
+      pdfPath: body.pdfPath ?? (existing as LiteratureRow).pdfPath,
+      pdfFileName: body.pdfFileName ?? (existing as LiteratureRow).pdfFileName,
+      cloudLink: body.cloudLink ?? (existing as LiteratureRow).cloudLink,
+      tagIds: JSON.stringify(body.tagIds ?? JSON.parse((existing as LiteratureRow).tagIds)),
     };
 
     db.prepare(`
@@ -199,7 +223,7 @@ router.put('/:id', authenticate, (req: Request, res: Response) => {
  */
 router.delete('/:id', authenticate, (req: Request, res: Response) => {
   try {
-    const literature = db.prepare('SELECT * FROM literatures WHERE id = ?').get(req.params.id) as any;
+    const literature = db.prepare('SELECT * FROM literatures WHERE id = ?').get(req.params.id) as LiteratureRow | undefined;
     if (!literature) {
       res.status(404).json({ error: 'Literature not found' });
       return;
@@ -238,7 +262,7 @@ router.delete('/:id', authenticate, (req: Request, res: Response) => {
  */
 router.post('/:id/tags', (req: Request, res: Response) => {
   try {
-    const literature = db.prepare('SELECT * FROM literatures WHERE id = ?').get(req.params.id) as any;
+    const literature = db.prepare('SELECT * FROM literatures WHERE id = ?').get(req.params.id) as LiteratureRow | undefined;
     if (!literature) {
       res.status(404).json({ error: 'Literature not found' });
       return;
@@ -274,7 +298,7 @@ router.post('/:id/tags', (req: Request, res: Response) => {
  */
 router.delete('/:id/tags/:tagId', (req: Request, res: Response) => {
   try {
-    const literature = db.prepare('SELECT * FROM literatures WHERE id = ?').get(req.params.id) as any;
+    const literature = db.prepare('SELECT * FROM literatures WHERE id = ?').get(req.params.id) as LiteratureRow | undefined;
     if (!literature) {
       res.status(404).json({ error: 'Literature not found' });
       return;

@@ -94,7 +94,7 @@ export default function Import() {
   )
 
   const handleFileContent = useCallback(
-    (content: string, _filename: string) => parseContent(content),
+    (content: string) => parseContent(content),
     [parseContent],
   )
 

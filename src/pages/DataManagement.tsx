@@ -162,11 +162,12 @@ export default function DataManagement() {
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
-    } catch (err: any) {
-      if (err.message?.includes('404')) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Export failed'
+      if (message.includes('404')) {
         setError(t('data.exportEmpty'))
       } else {
-        setError(err.message || 'Export failed')
+        setError(message)
       }
     } finally {
       setIsExporting(false)
@@ -177,7 +178,7 @@ export default function DataManagement() {
   // Import
   // ============================================================
 
-  async function handleFileSelect(file: File) {
+  const handleFileSelect = useCallback(async (file: File) => {
     if (!file.name.endsWith('.zip')) {
       setError(t('data.invalidFile'))
       return
@@ -193,18 +194,18 @@ export default function DataManagement() {
       const actions = new Map<number, 'skip' | 'overwrite'>()
       result.duplicates.forEach((_, i) => actions.set(i, 'skip'))
       setDuplicateActions(actions)
-    } catch (err: any) {
-      setError(err.message || 'Import preview failed')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Import preview failed')
       setImportStep('idle')
     }
-  }
+  }, [t])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
     const file = e.dataTransfer.files[0]
     if (file) handleFileSelect(file)
-  }, [])
+  }, [handleFileSelect])
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -239,7 +240,7 @@ export default function DataManagement() {
     try {
       const duplicates: DuplicateAction[] = previewData.duplicates.map((dup, i) => ({
         imported: dup.imported,
-        existingId: (dup.existing as any).id,
+        existingId: (dup.existing as { id?: string }).id ?? '',
         action: duplicateActions.get(i) || 'skip',
       }))
 
@@ -250,8 +251,8 @@ export default function DataManagement() {
 
       setImportResult(result)
       setImportStep('done')
-    } catch (err: any) {
-      setError(err.message || 'Import failed')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Import failed')
       setImportStep('preview')
     }
   }
@@ -426,7 +427,7 @@ export default function DataManagement() {
                     const isExpanded = expandedDuplicates.has(i)
                     const action = duplicateActions.get(i) || 'skip'
                     const impPdf = !!(dup.imported.hasPdf || dup.imported.pdfPath)
-                    const extPdf = !!(dup.existing.hasPdf || (dup.existing as any).pdfPath)
+                    const extPdf = !!(dup.existing.hasPdf || (dup.existing as { pdfPath?: string }).pdfPath)
                     const impLink = !!(dup.imported.cloudLink)
                     const extLink = !!(dup.existing.cloudLink)
                     const hasDiff = impPdf !== extPdf || impLink !== extLink

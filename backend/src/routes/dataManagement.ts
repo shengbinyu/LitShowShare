@@ -55,6 +55,31 @@ interface ExportExternalLink {
   lastChecked: string;
 }
 
+/** Row shape returned by SELECT * FROM literatures */
+interface LiteratureRow {
+  id: string;
+  title: string;
+  authors: string;
+  abstract: string;
+  keywords: string;
+  publishDate: string;
+  category: string | null;
+  doi: string;
+  journal: string;
+  volume: string;
+  number: string;
+  pages: string;
+  publisher: string;
+  sourceFormat: string;
+  pdfPath: string;
+  pdfFileName: string;
+  cloudLink: string;
+  tagIds: string;
+  uploadedBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /**
  * Parse JSON text fields from a literature row into JavaScript objects.
  */
@@ -357,7 +382,7 @@ router.post('/import/confirm', authenticate, requireAdmin, upload.single('file')
         lit.pdfFileName || '',
         lit.cloudLink || '',
         JSON.stringify(newTagIds),
-        (req as any).user!.id,
+        req.user!.id,
         now, now,
       );
 
@@ -380,7 +405,7 @@ router.post('/import/confirm', authenticate, requireAdmin, upload.single('file')
       }
 
       if (dup.action === 'overwrite') {
-        const existingLit = db.prepare('SELECT * FROM literatures WHERE id = ?').get(dup.existingId) as any;
+        const existingLit = db.prepare('SELECT * FROM literatures WHERE id = ?').get(dup.existingId) as LiteratureRow | undefined;
         if (!existingLit) {
           skippedCount++;
           continue;

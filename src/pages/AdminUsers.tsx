@@ -21,15 +21,12 @@ export default function AdminUsers() {
   const [editingUser, setEditingUser] = useState<PublicUser | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
 
-  // Auth gate
-  if (!isAuthenticated) return <Navigate to="/login" replace />
-
   async function loadUsers() {
     setLoading(true)
     try {
       const list = await authApi.getUsers()
       setUsers(list)
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('[AdminUsers] load failed:', err)
     } finally {
       setLoading(false)
@@ -39,6 +36,9 @@ export default function AdminUsers() {
   useEffect(() => {
     if (isAdmin) loadUsers()
   }, [isAdmin])
+
+  // Auth gate
+  if (!isAuthenticated) return <Navigate to="/login" replace />
 
   async function handleDelete(u: PublicUser) {
     if (currentUser?.id === u.id) {
@@ -243,8 +243,8 @@ function UserFormModal({ mode, existing, onClose, onSubmit }: UserFormModalProps
         if (password) payload.password = password
         await onSubmit(payload)
       }
-    } catch (err: any) {
-      setError(err?.message ?? 'Error')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error')
     } finally {
       setSubmitting(false)
     }
