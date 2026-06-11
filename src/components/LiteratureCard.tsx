@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'motion/react'
-import { Calendar, User, ExternalLink, BookOpen, Hash, FileText, Cloud, ChevronDown, ChevronUp } from 'lucide-react'
+import { motion } from 'motion/react'
+import { Calendar, User, ExternalLink, BookOpen, Hash, FileText, Cloud } from 'lucide-react'
 import type { Literature, Category, Tag } from '@/utils/db'
 import { useTranslation } from '@/i18n/LanguageContext'
 import { getPdfUrl } from '@/hooks/useLiterature'
@@ -19,6 +17,8 @@ interface LiteratureCardProps {
   tags?: Tag[]
   /** Zero-based index used to compute stagger animation delay. */
   index?: number
+  /** Callback when the card is selected (clicked). */
+  onSelect?: () => void
 }
 
 // ============================================================
@@ -26,28 +26,26 @@ interface LiteratureCardProps {
 // ============================================================
 
 /**
- * LiteratureCard renders a single literature entry as a styled card
- * with an expandable preview panel.
+ * LiteratureCard renders a single literature entry as a styled card.
  *
  * Layout strategy for equal-height cards in a grid:
  *   - Card root: `h-full flex` (fills the grid track height).
  *   - Body: `flex flex-col` with three regions:
  *       Header (title + meta) — natural height
  *       Middle (abstract)     — `flex-1` to absorb remaining space
- *       Footer (chips + links) — `mt-auto`, pinned to the bottom
+ *       Footer (chips + links) — pinned to the bottom
  *   - Text overflow is clamped (title=2 lines, abstract=3 lines, chips=1 row)
  *     so visual density stays consistent across cards.
- *   - Preview panel expands below the footer with smooth animation.
  */
 export default function LiteratureCard({
   literature,
   category,
   tags = [],
   index = 0,
+  onSelect,
 }: LiteratureCardProps) {
   const { t } = useTranslation()
   const { isAuthenticated } = useAuthStore()
-  const [previewOpen, setPreviewOpen] = useState(false)
 
   // Category color strip: use category color if available, else gold-500
   const stripColor = category?.color ?? '#c9a84c'
@@ -78,32 +76,16 @@ export default function LiteratureCard({
     Boolean(literature.doi) ||
     (isAuthenticated && (Boolean(literature.pdfPath) || Boolean(literature.cloudLink)))
 
-  // Build volume/issue/pages display
-  const volParts: string[] = []
-  if (literature.volume) volParts.push(`Vol. ${literature.volume}`)
-  if (literature.number) volParts.push(`No. ${literature.number}`)
-  if (literature.pages) volParts.push(`pp. ${literature.pages}`)
-  const volDisplay = volParts.join(', ')
-
-  // Determine if preview has meaningful content
-  const hasPreviewContent =
-    literature.abstract.length > 0 ||
-    literature.journal.length > 0 ||
-    literature.publisher.length > 0 ||
-    volDisplay.length > 0 ||
-    Boolean(literature.doi) ||
-    literature.keywords.length > 0 ||
-    literatureTags.length > 0
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: staggerDelay, ease: 'easeOut' }}
-      className={`group relative flex border theme-bg-card theme-border-primary
+      onClick={onSelect}
+      className={`group relative flex h-full border theme-bg-card theme-border-primary
                  rounded-xl overflow-hidden theme-shadow-card
                  hover:-translate-y-0.5 hover:theme-border-focus
-                 transition-all duration-300
+                 transition-all duration-300 cursor-pointer
                  dark:hover:shadow-lg dark:hover:shadow-navy-950/50 theme-shadow-card-hover`}
     >
       {/* Left colored strip — full height, slightly wider on hover for tactile feedback */}
@@ -118,16 +100,16 @@ export default function LiteratureCard({
         {/* ===== Header: title + authors + date ===== */}
         <div className="space-y-1">
           {/* Title — clamp to 2 lines so each card header has a consistent height */}
-          <Link
-            to={`/literature/${literature.id}`}
-            className="block font-display text-lg font-semibold leading-snug
+          <button
+            onClick={(e) => { e.stopPropagation(); onSelect?.() }}
+            className="block text-left font-display text-lg font-semibold leading-snug
                        theme-text-heading hover:text-gold-500 transition-colors
-                       line-clamp-2"
+                       line-clamp-2 w-full"
             title={literature.title}
           >
             <BookOpen className="inline-block w-4 h-4 mr-1.5 opacity-50 align-text-bottom" />
             <HighlightText text={literature.title} />
-          </Link>
+          </button>
 
           {/* Authors — single-line truncate */}
           <p
@@ -152,9 +134,9 @@ export default function LiteratureCard({
         </div>
 
         {/* ===== Middle: abstract — flex-1 absorbs spare vertical space ===== */}
-        <div className={`mt-3 min-h-0 ${previewOpen ? '' : 'flex-1'}`}>
+        <div className="mt-3 min-h-0 flex-1">
           {literature.abstract ? (
-            <p className={`theme-text-secondary text-sm leading-relaxed ${previewOpen ? '' : 'line-clamp-3'}`}>
+            <p className="theme-text-secondary text-sm leading-relaxed line-clamp-3">
               <HighlightText text={literature.abstract} />
             </p>
           ) : (
@@ -168,8 +150,8 @@ export default function LiteratureCard({
           <div className="mt-4 pt-3 border-t theme-border-primary space-y-2">
             {/* Keywords — single row, overflow clipped */}
             {literature.keywords.length > 0 && (
-              <div className={`flex gap-1.5 ${previewOpen ? 'flex-wrap' : 'flex-nowrap overflow-hidden max-h-6'}`}>
-                {(previewOpen ? literature.keywords : literature.keywords.slice(0, 4)).map((kw) => (
+              <div className="flex gap-1.5 flex-nowrap overflow-hidden max-h-6">
+                {literature.keywords.slice(0, 4).map((kw) => (
                   <span
                     key={kw}
                     className="shrink-0 rounded-full theme-bg-tertiary theme-text-secondary
@@ -184,9 +166,9 @@ export default function LiteratureCard({
 
             {/* Tags — single row, overflow clipped */}
             {literatureTags.length > 0 && (
-              <div className={`flex items-center gap-1.5 ${previewOpen ? 'flex-wrap' : 'flex-nowrap overflow-hidden max-h-6'}`}>
+              <div className="flex items-center gap-1.5 flex-nowrap overflow-hidden max-h-6">
                 <Hash className="w-3 h-3 theme-accent-subtle-text opacity-60 shrink-0" />
-                {(previewOpen ? literatureTags : literatureTags.slice(0, 4)).map((tag) => (
+                {literatureTags.slice(0, 4).map((tag) => (
                   <span
                     key={tag.id}
                     className="shrink-0 rounded-full theme-accent-subtle-bg theme-accent-subtle-text
@@ -205,6 +187,7 @@ export default function LiteratureCard({
                 href={`https://doi.org/${literature.doi}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center gap-1 max-w-full text-xs
                            theme-text-link hover:text-gold-500 transition-colors"
                 title={literature.doi}
@@ -222,6 +205,7 @@ export default function LiteratureCard({
                     href={getPdfUrl(literature.pdfPath)}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="inline-flex items-center gap-1.5 rounded-md theme-accent-subtle-bg
                                border theme-accent-subtle-border px-2.5 py-1 text-xs
                                theme-accent-subtle-text hover:brightness-110 transition-all"
@@ -235,6 +219,7 @@ export default function LiteratureCard({
                     href={literature.cloudLink}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="inline-flex items-center gap-1.5 rounded-md theme-accent-subtle-bg
                                border theme-accent-subtle-border px-2.5 py-1 text-xs
                                theme-accent-subtle-text hover:brightness-110 transition-all"
@@ -246,77 +231,6 @@ export default function LiteratureCard({
               </div>
             )}
           </div>
-        )}
-
-        {/* ===== Preview Panel: expanded metadata ===== */}
-        <AnimatePresence>
-          {previewOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="overflow-hidden"
-            >
-              <div className="mt-3 pt-3 border-t theme-border-primary space-y-2.5">
-                {/* Journal & Publisher */}
-                {(literature.journal || literature.publisher) && (
-                  <div className="flex items-start gap-2">
-                    <BookOpen className="w-3.5 h-3.5 mt-0.5 shrink-0 theme-text-muted" />
-                    <div className="min-w-0">
-                      <p className="text-xs theme-text-label">{t('detail.journal')}</p>
-                      <p className="text-sm theme-text-secondary">
-                        {literature.journal || literature.publisher}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Volume / Issue / Pages */}
-                {volDisplay && (
-                  <div className="flex items-start gap-2">
-                    <FileText className="w-3.5 h-3.5 mt-0.5 shrink-0 theme-text-muted" />
-                    <div className="min-w-0">
-                      <p className="text-xs theme-text-label">{t('detail.volumeIssue')}</p>
-                      <p className="text-sm theme-text-secondary">{volDisplay}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Link to detail page */}
-                <Link
-                  to={`/literature/${literature.id}`}
-                  className="inline-flex items-center gap-1.5 text-xs theme-text-link hover:text-gold-500 transition-colors"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  {t('card.viewDetails')}
-                </Link>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* ===== Preview toggle button ===== */}
-        {hasPreviewContent && (
-          <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPreviewOpen(!previewOpen) }}
-            className="mt-2 flex items-center justify-center gap-1 w-full
-                       rounded-md py-1 text-xs theme-text-muted
-                       hover:text-gold-500 hover:theme-bg-hover
-                       transition-colors focus:outline-none"
-          >
-            {previewOpen ? (
-              <>
-                <ChevronUp className="w-3.5 h-3.5" />
-                {t('card.collapse')}
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-3.5 h-3.5" />
-                {t('card.preview')}
-              </>
-            )}
-          </button>
         )}
       </div>
     </motion.div>

@@ -4,7 +4,6 @@ import { LanguageProvider } from '@/i18n/LanguageContext'
 import { useAuthStore } from '@/store/authStore'
 import Layout from '@/components/Layout'
 import Home from '@/pages/Home'
-import LiteratureDetail from '@/pages/LiteratureDetail'
 import Import from '@/pages/Import'
 import Login from '@/pages/Login'
 import AdminUsers from '@/pages/AdminUsers'
@@ -49,7 +48,7 @@ function RequireAdmin({ children }: { children: ReactElement }) {
  * sign-in experience.
  *
  * Anonymous access policy:
- * - Public: Home (/), Literature Detail (/literature/:id)
+ * - Public: Home (/)
  * - Auth required: Import (/import), Admin Users (/admin/users)
  */
 export default function App() {
@@ -71,7 +70,6 @@ export default function App() {
           <Route element={<Layout />}>
             {/* Public routes */}
             <Route path="/" element={<Home />} />
-            <Route path="/literature/:id" element={<LiteratureDetail />} />
             <Route path="/help" element={<Help />} />
 
             {/* Protected routes */}

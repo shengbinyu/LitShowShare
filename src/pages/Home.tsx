@@ -9,6 +9,7 @@ import { UNCATEGORY_VALUE, type Literature, type Category } from '@/utils/db'
 import { normalizeAuthorName } from '@/utils/authorUtils'
 import LiteratureCard from '@/components/LiteratureCard'
 import LiteratureListItem from '@/components/LiteratureListItem'
+import LiteratureDetailModal from '@/components/LiteratureDetailModal'
 
 // ============================================================
 // Helpers
@@ -115,6 +116,7 @@ export default function Home() {
     useLiteratureStore()
   const { t } = useTranslation()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
+  const [selectedLiteratureId, setSelectedLiteratureId] = useState<string | null>(null)
 
   // Build a category lookup map: name -> Category
   const categoryMap = useMemo(() => {
@@ -165,6 +167,11 @@ export default function Home() {
   const isLibraryEmpty = literatures.length === 0
   const hasNoResults = filteredLiteratures.length === 0
 
+  // Find the selected literature for the detail modal
+  const selectedLiterature = selectedLiteratureId
+    ? literatures.find((lit) => lit.id === selectedLiteratureId) ?? null
+    : null
+
   return (
     <div className="space-y-8">
       {/* Section header with count badge and view toggle */}
@@ -205,18 +212,19 @@ export default function Home() {
       ) : (
         viewMode === 'card' ? (
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             variants={gridContainerVariants}
             initial="hidden"
             animate="visible"
           >
             {filteredLiteratures.map((lit, idx) => (
-              <motion.div key={lit.id} variants={gridItemVariants}>
+              <motion.div key={lit.id} variants={gridItemVariants} className="h-full">
                 <LiteratureCard
                   literature={lit}
                   category={categoryMap.get(lit.category ?? '')}
                   tags={tags}
                   index={idx}
+                  onSelect={() => setSelectedLiteratureId(lit.id)}
                 />
               </motion.div>
             ))}
@@ -233,12 +241,20 @@ export default function Home() {
                 <LiteratureListItem
                   literature={lit}
                   category={categoryMap.get(lit.category ?? '')}
+                  onSelect={() => setSelectedLiteratureId(lit.id)}
                 />
               </motion.div>
             ))}
           </motion.div>
         )
       )}
+
+      {/* Literature detail modal */}
+      <LiteratureDetailModal
+        literature={selectedLiterature}
+        isOpen={selectedLiteratureId !== null}
+        onClose={() => setSelectedLiteratureId(null)}
+      />
     </div>
   )
 }
