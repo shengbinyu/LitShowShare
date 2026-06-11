@@ -49,6 +49,11 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Literature Card
     'card.unknownAuthor': 'Unknown Author',
+    'card.preview': 'Preview',
+    'card.collapse': 'Collapse',
+    'card.viewDetails': 'View Details',
+    'card.openPdf': 'Open PDF',
+    'card.openCloudLink': 'Open Full-text Link',
 
     // Detail Page
     'detail.back': 'Library',
@@ -149,8 +154,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'home.viewList': 'List View',
 
     // Literature Card
-    'card.openPdf': 'Open PDF',
-    'card.openCloudLink': 'Open Full-text Link',
+
 
     // Theme
     'nav.lightMode': 'Light Mode',
@@ -394,6 +398,9 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Literature Card
     'card.unknownAuthor': '未知作者',
+    'card.preview': '预览',
+    'card.collapse': '收起',
+    'card.viewDetails': '查看详情',
     'card.openPdf': '打开 PDF',
     'card.openCloudLink': '全文链接',
 

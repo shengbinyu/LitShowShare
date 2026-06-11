@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import type { Literature, ExternalLink as ExternalLinkType, Tag } from '@/utils/db'
-import { Calendar, User, BookOpen, Hash, ExternalLink, FileText, Award, Copy, Quote, Download, Eye, Cloud, X, LogIn, Lock } from 'lucide-react'
+import { Calendar, User, BookOpen, Hash, ExternalLink, FileText, Award, Copy, Quote, Download, Eye, Cloud, X } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useTags, useTagMutations, addTagToLiterature, removeTagFromLiterature, getPdfUrl } from '@/hooks/useLiterature'
 import { useTranslation } from '@/i18n/LanguageContext'
@@ -425,8 +424,8 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
         </motion.div>
       )}
 
-      {/* ---- PDF File Section ---- */}
-      {literature.pdfPath && (
+      {/* ---- PDF File Section — only visible to authenticated users ---- */}
+      {isAuthenticated && literature.pdfPath && (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -445,54 +444,35 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
                 {literature.pdfFileName || 'document.pdf'}
               </p>
             </div>
-            {isAuthenticated ? (
-              <div className="flex items-center gap-2">
-                <a
-                  href={getPdfUrl(literature.pdfPath)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg theme-bg-tertiary px-3 py-1.5
-                             font-body text-xs font-medium theme-text-secondary
-                             hover:theme-bg-hover hover:text-gold-500 transition-colors"
-                >
-                  <Eye className="h-3.5 w-3.5" />
-                  {t('detail.previewPdf')}
-                </a>
-                <a
-                  href={getPdfUrl(literature.pdfPath)}
-                  download={literature.pdfFileName || 'document.pdf'}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-gold-500 px-3 py-1.5
-                             font-body text-xs font-medium text-navy-950
-                             hover:bg-gold-400 transition-colors"
-                >
-                  <Download className="h-3.5 w-3.5" />
-                  {t('detail.downloadPdf')}
-                </a>
-              </div>
-            ) : (
-              // Anonymous user: show login prompt instead of PDF actions
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 font-body text-xs theme-text-muted">
-                  <Lock className="h-3.5 w-3.5" />
-                  {t('detail.loginToViewPdf')}
-                </span>
-                <Link
-                  to="/login"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-gold-500 px-3 py-1.5
-                             font-body text-xs font-medium text-navy-950
-                             hover:bg-gold-400 transition-colors"
-                >
-                  <LogIn className="h-3.5 w-3.5" />
-                  {t('detail.loginNow')}
-                </Link>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              <a
+                href={getPdfUrl(literature.pdfPath)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg theme-bg-tertiary px-3 py-1.5
+                           font-body text-xs font-medium theme-text-secondary
+                           hover:theme-bg-hover hover:text-gold-500 transition-colors"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                {t('detail.previewPdf')}
+              </a>
+              <a
+                href={getPdfUrl(literature.pdfPath)}
+                download={literature.pdfFileName || 'document.pdf'}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-gold-500 px-3 py-1.5
+                           font-body text-xs font-medium text-navy-950
+                           hover:bg-gold-400 transition-colors"
+              >
+                <Download className="h-3.5 w-3.5" />
+                {t('detail.downloadPdf')}
+              </a>
+            </div>
           </div>
         </motion.div>
       )}
 
-      {/* ---- Cloud Drive Link Section ---- */}
-      {literature.cloudLink && (
+      {/* ---- Cloud Drive Link Section — only visible to authenticated users ---- */}
+      {isAuthenticated && literature.cloudLink && (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -505,33 +485,14 @@ export default function MetadataDisplay({ literature, externalLinks, tags: exter
               {t('detail.cloudLink')}
             </h3>
           </div>
-          {isAuthenticated ? (
-            <a
-              href={literature.cloudLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-body text-sm theme-text-link hover:text-gold-500 underline underline-offset-2 transition-colors break-all"
-            >
-              {literature.cloudLink}
-            </a>
-          ) : (
-            // Anonymous user: show login prompt instead of full-text link
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 font-body text-sm theme-text-muted">
-                <Lock className="h-4 w-4" />
-                {t('detail.loginToViewCloudLink')}
-              </span>
-              <Link
-                to="/login"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-gold-500 px-3 py-1.5
-                           font-body text-xs font-medium text-navy-950
-                           hover:bg-gold-400 transition-colors"
-              >
-                <LogIn className="h-3.5 w-3.5" />
-                {t('detail.loginNow')}
-              </Link>
-            </div>
-          )}
+          <a
+            href={literature.cloudLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-body text-sm theme-text-link hover:text-gold-500 underline underline-offset-2 transition-colors break-all"
+          >
+            {literature.cloudLink}
+          </a>
         </motion.div>
       )}
 
