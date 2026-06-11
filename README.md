@@ -18,7 +18,7 @@ A literature management web application for organizing, importing, and browsing 
 - **Import papers** from RIS/BibTeX files, PDF uploads, and external links
 - **Organize literature** with custom categories and tags
 - **Full-text search** across titles, authors, abstracts, and keywords
-- **Detail view** with metadata, abstracts, PDF viewer, linked resources, and inline editing mode
+- **Detail view** — Click any card to open a detail modal with metadata, abstracts, PDF viewer, linked resources, and inline editing mode; unauthenticated users can only download/export, while editing and deleting require login
 - **Data management** — Admin-only ZIP-based import/export with duplicate detection, diff comparison, and selective skip/overwrite
 - **Equal-height literature cards** — Home page grid uses `auto-rows-fr` + three-section flex layout (header / abstract / footer) so every card has a consistent height and visual density, regardless of metadata length
 - **Compact list view** — Alternate row-based literature display for denser browsing
@@ -191,8 +191,7 @@ Protected endpoints expect an `Authorization: Bearer <token>` header obtained fr
 | Path | Component | Access | Description |
 |------|-----------|--------|-------------|
 | /login | Login | public | Login page |
-| / | Home | public | Literature library grid with search, filter, sort |
-| /literature/:id | LiteratureDetail | public | Full detail view + inline editing |
+| / | Home | public | Literature library grid with search, filter, sort; click card to open detail modal |
 | /help | Help | public | In-app help/documentation |
 | /import | Import | user | Multi-tab import: RIS, BibTeX, PDF, External Links |
 | /admin/users | AdminUsers | admin | User management |
@@ -252,8 +251,7 @@ LitShowShare/
 │   │   ├── SearchBar.tsx         # 搜索输入 + 排序切换
 │   │   └── Empty.tsx             # 空白占位
 │   ├── pages/
-│   │   ├── Home.tsx              # 文献库：筛选、排序、卡片/列表切换
-│   │   ├── LiteratureDetail.tsx  # 文献详情 + 内联编辑
+│   │   ├── Home.tsx              # 文献库：筛选、排序、卡片/列表切换 + 详情弹窗
 │   │   ├── Import.tsx            # 导入页：RIS/BibTeX/PDF/外部链接标签页
 │   │   ├── Login.tsx             # 登录页（密码可见性切换）
 │   │   ├── AdminUsers.tsx        # 管理员用户管理
@@ -391,8 +389,7 @@ npm start
 | 路径 | 组件 | 权限 | 描述 |
 |------|------|------|------|
 | /login | Login | 公开 | 登录页 |
-| / | Home | 公开 | 文献库首页，支持搜索、筛选、排序 |
-| /literature/:id | LiteratureDetail | 公开 | 详情视图 + 内联编辑 |
+| / | Home | 公开 | 文献库首页，支持搜索、筛选、排序；点击卡片打开详情弹窗 |
 | /help | Help | 公开 | 应用内帮助文档 |
 | /import | Import | 用户 | 多标签导入：RIS、BibTeX、PDF、外部链接 |
 | /admin/users | AdminUsers | 管理员 | 用户管理 |
