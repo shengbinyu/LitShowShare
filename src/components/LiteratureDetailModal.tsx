@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { X, Pencil, Trash2, Download, Check, X as XIcon, Upload, FileText } from 'lucide-react'
+import { X, Pencil, Trash2, Download, Check, X as XIcon, Upload, FileText, Share2 } from 'lucide-react'
 import type { Literature } from '@/utils/db'
 import { useExternalLinks, useTags, useCategories, useLiteratureMutations, deleteLiterature, uploadPdf } from '@/hooks/useLiterature'
 import { useAuthStore } from '@/store/authStore'
@@ -94,6 +94,7 @@ export default function LiteratureDetailModal({
   const [editForm, setEditForm] = useState<EditForm>(emptyForm)
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   // Permission: only the uploader or an admin can modify
   const canModify = Boolean(
@@ -149,6 +150,26 @@ export default function LiteratureDetailModal({
     await deleteLiterature(literature.id)
     onDeleted?.()
     onClose()
+  }
+
+  async function handleShare() {
+    if (!literature) return
+    const url = `${window.location.origin}/?lit=${literature.id}`
+    try {
+      await navigator.clipboard.writeText(url)
+    } catch {
+      // Fallback for environments without Clipboard API
+      const ta = document.createElement('textarea')
+      ta.value = url
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   function handleExport() {
@@ -263,6 +284,19 @@ export default function LiteratureDetailModal({
                   {/* Action buttons — only shown when NOT editing */}
                   {!isEditing && (
                     <>
+                      {/* Share — visible to all users (including anonymous) */}
+                      <button
+                        onClick={handleShare}
+                        title={copied ? t('detail.linkCopied') : t('detail.share')}
+                        className="rounded-lg p-2 theme-text-muted
+                                   hover:theme-bg-hover hover:text-gold-500 transition-colors"
+                      >
+                        {copied ? (
+                          <Check className="h-4 w-4 text-gold-500" />
+                        ) : (
+                          <Share2 className="h-4 w-4" />
+                        )}
+                      </button>
                       {/* Download / Export — visible to all users */}
                       <button
                         onClick={handleExport}

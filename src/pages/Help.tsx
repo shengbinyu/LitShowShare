@@ -133,7 +133,7 @@ export default function Help() {
     { labelKey: 'help.roles.row.import', cells: [false, true, true] },
     { labelKey: 'help.roles.row.editOwn', cells: [false, true, true] },
     { labelKey: 'help.roles.row.editAny', cells: [false, false, true] },
-    { labelKey: 'help.roles.row.dataIO', cells: [false, true, true] },
+    { labelKey: 'help.roles.row.dataIO', cells: [false, false, true] },
     { labelKey: 'help.roles.row.manageUsers', cells: [false, false, true] },
   ]
 
@@ -293,6 +293,7 @@ export default function Help() {
                   t('help.page.detail.f3'),
                   t('help.page.detail.f4'),
                   t('help.page.detail.f5'),
+                  t('help.page.detail.f6'),
                 ]}
               />
               <FeatureCard
@@ -400,7 +401,7 @@ export default function Help() {
           {/* --- FAQ --- */}
           <Section id="faq" icon={<HelpCircle size={18} />} title={t('help.section.faq')}>
             <div className="space-y-4">
-              {([1, 2, 3, 4, 5] as const).map((n) => (
+              {([1, 2, 3, 4, 5, 6] as const).map((n) => (
                 <div key={n} className="border-l-2 border-gold-500/60 pl-3">
                   <p className="font-semibold theme-text-heading">{t(`help.faq.q${n}`)}</p>
                   <p className="mt-1 theme-text-secondary">{t(`help.faq.a${n}`)}</p>

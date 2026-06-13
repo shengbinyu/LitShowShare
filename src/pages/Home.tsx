@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { BookOpen, Search, LayoutGrid, List } from 'lucide-react'
 import { useLiteratures, useCategories, useTags } from '@/hooks/useLiterature'
@@ -117,6 +117,40 @@ export default function Home() {
   const { t } = useTranslation()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [selectedLiteratureId, setSelectedLiteratureId] = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const litFromUrl = searchParams.get('lit')
+
+  // Auto-open the detail modal when ?lit=<id> is present in the URL
+  useEffect(() => {
+    if (!litFromUrl) return
+    if (literatures.length === 0) return // wait for data to load
+    const exists = literatures.some((l) => l.id === litFromUrl)
+    if (exists) {
+      setSelectedLiteratureId(litFromUrl)
+    } else {
+      // Invalid id (e.g. literature was deleted): drop the param silently
+      const next = new URLSearchParams(searchParams)
+      next.delete('lit')
+      setSearchParams(next, { replace: true })
+    }
+  }, [litFromUrl, literatures, searchParams, setSearchParams])
+
+  // Open modal & sync ?lit= into the URL so the share button always copies the
+  // correct deep link, even if the user opened the modal manually.
+  function openDetail(id: string) {
+    setSelectedLiteratureId(id)
+    const next = new URLSearchParams(searchParams)
+    next.set('lit', id)
+    setSearchParams(next)
+  }
+
+  // Close modal & remove ?lit= from the URL while preserving other params.
+  function closeDetail() {
+    setSelectedLiteratureId(null)
+    const next = new URLSearchParams(searchParams)
+    next.delete('lit')
+    setSearchParams(next, { replace: true })
+  }
 
   // Build a category lookup map: name -> Category
   const categoryMap = useMemo(() => {
@@ -224,7 +258,7 @@ export default function Home() {
                   category={categoryMap.get(lit.category ?? '')}
                   tags={tags}
                   index={idx}
-                  onSelect={() => setSelectedLiteratureId(lit.id)}
+                  onSelect={() => openDetail(lit.id)}
                 />
               </motion.div>
             ))}
@@ -241,7 +275,7 @@ export default function Home() {
                 <LiteratureListItem
                   literature={lit}
                   category={categoryMap.get(lit.category ?? '')}
-                  onSelect={() => setSelectedLiteratureId(lit.id)}
+                  onSelect={() => openDetail(lit.id)}
                 />
               </motion.div>
             ))}
@@ -253,7 +287,7 @@ export default function Home() {
       <LiteratureDetailModal
         literature={selectedLiterature}
         isOpen={selectedLiteratureId !== null}
-        onClose={() => setSelectedLiteratureId(null)}
+        onClose={closeDetail}
       />
     </div>
   )

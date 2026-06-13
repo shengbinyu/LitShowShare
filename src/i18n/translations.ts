@@ -86,6 +86,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'detail.loginNow': 'Log in',
     'detail.save': 'Save',
     'detail.cancel': 'Cancel',
+    'detail.share': 'Share literature',
+    'detail.linkCopied': 'Link copied',
 
     // Import Page
     'import.title': 'Import Literature',
@@ -277,7 +279,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     'help.page.home.title': 'Library (Home)',
     'help.page.home.desc': 'The main entry point. Shows every literature record as a card (or a compact row in list view).',
-    'help.page.home.f1': 'Search the title, authors, abstract and keywords from the top bar.',
+    'help.page.home.f1': 'Search the title, authors, abstract and keywords from the top bar — on narrow screens the box collapses into an icon button that expands to a focused overlay.',
     'help.page.home.f2': 'Filter by category or tag from the left sidebar.',
     'help.page.home.f3': 'Sort by created date, publish date or title (A-Z / Z-A).',
     'help.page.home.f4': 'Switch between card view and list view from the toolbar.',
@@ -290,6 +292,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'help.page.detail.f3': 'Preview / download the PDF or open the full-text link (login required).',
     'help.page.detail.f4': 'Export a single entry as RIS or BibTeX.',
     'help.page.detail.f5': 'Edit or delete the entry (only the uploader or an admin can do this).',
+    'help.page.detail.f6': 'Share the entry: copy a public link that opens this exact dialog — works for visitors who are not logged in.',
 
     'help.page.import.title': 'Import',
     'help.page.import.desc': 'Three import flows are supported via tabs at the top of the page.',
@@ -300,7 +303,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'help.page.import.f5': 'Review the parsed preview, fix any errors, then click "Import" to commit.',
 
     'help.page.dataManagement.title': 'Data Management',
-    'help.page.dataManagement.desc': 'Backup and restore the whole library (or a single category) as a ZIP archive.',
+    'help.page.dataManagement.desc': 'Admin-only. Backup and restore the whole library (or a single category) as a ZIP archive.',
     'help.page.dataManagement.f1': 'Export all literature, or pick a single category, as a ZIP containing metadata + PDFs.',
     'help.page.dataManagement.f2': 'Import a previously exported ZIP — the preview screen highlights new vs. duplicate entries.',
     'help.page.dataManagement.f3': 'For each duplicate you can choose Skip or Overwrite (or apply Skip All / Overwrite All).',
@@ -336,7 +339,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'help.common.language.title': 'Language switch',
     'help.common.language.desc': 'Toggle between English and 中文 from the top bar. The choice is remembered across sessions.',
     'help.common.search.title': 'Global search',
-    'help.common.search.desc': 'The search box matches the query (case-insensitive) against title, authors, abstract and keywords of every entry.',
+    'help.common.search.desc': 'The search box matches the query (case-insensitive) against title, authors, abstract and keywords of every entry. On narrow screens the input collapses into a Search icon button in the top-right corner; tap it to open a full-width overlay (close with Esc, the X button, or by tapping outside).',
     'help.common.pdfAuth.title': 'Why do PDFs require login?',
     'help.common.pdfAuth.desc': 'PDFs and full-text links may be copyrighted material, so the file routes are protected by JWT. Anonymous visitors can still see that a PDF exists, but must log in to open it.',
 
@@ -345,11 +348,13 @@ export const translations: Record<Language, Record<string, string>> = {
     'help.faq.q2': 'I see the PDF button but clicking it asks me to log in. Why?',
     'help.faq.a2': 'PDF and full-text link routes are gated behind authentication. Sign in (any account) to open them.',
     'help.faq.q3': 'How do I back up or migrate the whole library?',
-    'help.faq.a3': 'Open Data Management, click "Export All Literature" to download a ZIP, then upload that ZIP on another deployment to restore.',
+    'help.faq.a3': 'Sign in as an administrator, open Data Management, click "Export All Literature" to download a ZIP, then upload that ZIP on another deployment to restore. Regular users do not have access to this page.',
     'help.faq.q4': 'Can I bulk-delete entries?',
     'help.faq.a4': 'Bulk delete is not supported yet. Delete entries one by one from the detail page.',
     'help.faq.q5': 'My RIS / BibTeX file fails to parse. What can I do?',
     'help.faq.a5': 'The import preview lists every error with its line number. Fix the offending entries in the source file (or paste a smaller snippet) and re-parse. Most failures come from unclosed braces (BibTeX) or missing ER tags (RIS).',
+    'help.faq.q6': 'How do I share a literature entry with someone who has no account?',
+    'help.faq.a6': 'Open the entry, click the Share icon in the dialog header, and the deep link is copied to your clipboard. Anyone opening that link — even without logging in — lands on the home page with the same dialog already open. (Login is still required to download the PDF.)',
   },
 
   zh: {
@@ -435,6 +440,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'detail.loginNow': '立即登录',
     'detail.save': '保存',
     'detail.cancel': '取消',
+    'detail.share': '分享文献',
+    'detail.linkCopied': '链接已复制',
 
     // Import Page
     'import.title': '导入文献',
@@ -619,7 +626,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     'help.page.home.title': '文献库（首页）',
     'help.page.home.desc': '应用的主入口，以卡片形式（或紧凑列表）展示全部文献。',
-    'help.page.home.f1': '通过顶部搜索框检索标题、作者、摘要与关键词。',
+    'help.page.home.f1': '通过顶部搜索框检索标题、作者、摘要与关键词；窄屏下搜索框会折叠为一个图标按钮，点击后展开为浮层并自动聚焦。',
     'help.page.home.f2': '通过左侧侧边栏按分类或标签筛选。',
     'help.page.home.f3': '按创建时间、出版日期或标题（A-Z / Z-A）排序。',
     'help.page.home.f4': '在工具栏切换卡片视图与列表视图。',
@@ -632,6 +639,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'help.page.detail.f3': '预览 / 下载 PDF，或打开全文链接（需登录）。',
     'help.page.detail.f4': '将单条文献导出为 RIS 或 BibTeX。',
     'help.page.detail.f5': '编辑或删除文献（仅上传者本人或管理员可操作）。',
+    'help.page.detail.f6': '一键分享：复制可直接打开该文献弹窗的链接，未登录访客也可访问。',
 
     'help.page.import.title': '导入文献',
     'help.page.import.desc': '页面顶部提供 RIS / BibTeX / PDF 三种导入方式的切换 Tab。',
@@ -642,7 +650,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'help.page.import.f5': '在预览界面核对解析结果与错误，确认无误后点击「导入」提交。',
 
     'help.page.dataManagement.title': '数据管理',
-    'help.page.dataManagement.desc': '以 ZIP 压缩包的形式备份或恢复整个文献库（也可按分类导出）。',
+    'help.page.dataManagement.desc': '仅管理员可用。以 ZIP 压缩包的形式备份或恢复整个文献库（也可按分类导出）。',
     'help.page.dataManagement.f1': '导出全部文献或指定分类的文献，包含元数据与 PDF。',
     'help.page.dataManagement.f2': '导入此前导出的 ZIP，预览界面会标出「新增」与「重复」条目。',
     'help.page.dataManagement.f3': '对每条重复项可独立选择「跳过」或「覆盖」，也可使用「全部跳过 / 全部覆盖」。',
@@ -678,7 +686,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'help.common.language.title': '语言切换',
     'help.common.language.desc': '在顶部栏切换 English 与 中文，选择会跨会话保留。',
     'help.common.search.title': '全局搜索',
-    'help.common.search.desc': '搜索框会对每条文献的标题、作者、摘要和关键词进行不区分大小写的模糊匹配。',
+    'help.common.search.desc': '搜索框会对每条文献的标题、作者、摘要和关键词进行不区分大小写的模糊匹配。窄屏下搜索框会折叠到右上角的搜索图标按钮中，点击后弹出全宽浮层（按 Esc、点击 X 或浮层外区域均可关闭）。',
     'help.common.pdfAuth.title': '为什么 PDF 必须登录才能查看？',
     'help.common.pdfAuth.desc': 'PDF 与全文链接可能涉及版权内容，因此相关接口受 JWT 保护。匿名访客可以看到「存在 PDF」的标识，但必须登录后才能打开。',
 
@@ -687,10 +695,12 @@ export const translations: Record<Language, Record<string, string>> = {
     'help.faq.q2': '我看到 PDF 按钮，但点击后提示登录，为什么？',
     'help.faq.a2': 'PDF 与全文链接接口均需要登录后访问。任意账号登录后即可正常打开。',
     'help.faq.q3': '如何备份或迁移整个文献库？',
-    'help.faq.a3': '打开「数据管理」，点击「导出全部文献」下载 ZIP 文件，然后在另一台部署上上传该 ZIP 即可恢复。',
+    'help.faq.a3': '请使用管理员账号登录，进入「数据管理」页面，点击「导出全部文献」下载 ZIP 文件，然后在另一台部署上上传该 ZIP 即可恢复。普通用户没有该页面的访问权限。',
     'help.faq.q4': '可以批量删除文献吗？',
     'help.faq.a4': '目前不支持批量删除，请在每篇文献的详情页逐条删除。',
     'help.faq.q5': 'RIS / BibTeX 文件解析失败怎么办？',
     'help.faq.a5': '导入预览中会列出每个错误及对应行号。修正源文件中的问题条目（或粘贴更小的片段）后重新解析。常见原因是 BibTeX 大括号未闭合，或 RIS 缺少 ER 结束标记。',
+    'help.faq.q6': '如何把某篇文献分享给没有账号的同事？',
+    'help.faq.a6': '在文献详情弹窗的标题栏点击「分享」图标，链接会自动复制到剪贴板。对方打开该链接（即使未登录）也会直接看到对应的文献弹窗。下载 PDF 仍然需要登录。',
   },
 }

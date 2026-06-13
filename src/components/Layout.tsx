@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { useLiteratureStore } from '@/store/literatureStore'
 import { useAuthStore } from '@/store/authStore'
 import { useTranslation } from '@/i18n/LanguageContext'
@@ -27,6 +28,40 @@ export default function Layout() {
   const navigate = useNavigate()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement | null>(null)
+  // Mobile (< sm) collapsible search overlay
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
+  const mobileSearchRef = useRef<HTMLDivElement | null>(null)
+  const mobileSearchInputRef = useRef<HTMLInputElement | null>(null)
+
+  // Auto-focus the mobile search input when the overlay opens
+  useEffect(() => {
+    if (mobileSearchOpen) {
+      // Defer focus until after the element is mounted
+      requestAnimationFrame(() => mobileSearchInputRef.current?.focus())
+    }
+  }, [mobileSearchOpen])
+
+  // Close mobile search overlay on outside click or ESC
+  useEffect(() => {
+    if (!mobileSearchOpen) return
+    function handleClick(e: MouseEvent) {
+      if (
+        mobileSearchRef.current &&
+        !mobileSearchRef.current.contains(e.target as Node)
+      ) {
+        setMobileSearchOpen(false)
+      }
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setMobileSearchOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [mobileSearchOpen])
 
   // Close user menu on outside click
   useEffect(() => {
@@ -61,7 +96,7 @@ export default function Layout() {
       <header className="fixed top-0 inset-x-0 h-16 backdrop-blur-md border-b z-30" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
         <div className="flex items-center h-full px-4 gap-4">
           {/* Left: Hamburger (mobile) + Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={toggleSidebar}
               className="md:hidden p-1.5 rounded-lg theme-text-muted hover:theme-bg-hover hover:theme-text-primary transition-colors"
@@ -72,36 +107,99 @@ export default function Layout() {
 
             <Link to="/" className="flex items-center gap-2">
               <BookOpen size={22} className="text-gold-500" />
-              <span className="font-display text-lg font-semibold text-gold-500 tracking-wide">
+              <span className="hidden sm:inline font-display text-lg font-semibold text-gold-500 tracking-wide">
                 {t('app.name')}
               </span>
             </Link>
           </div>
 
-          {/* Center: Search bar */}
-          <div className="flex-1 max-w-md mx-auto">
-            <div className="relative">
+          {/* Center: Search bar — inline on >= sm; collapsed to an icon button on mobile */}
+          <div className="hidden sm:block flex-1 min-w-0 max-w-md mx-auto">
+            <div className="group relative">
               <Search
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 theme-text-muted"
+                className="absolute left-3 top-1/2 -translate-y-1/2 theme-text-muted
+                           group-focus-within:text-gold-500 transition-colors"
               />
               <input
                 type="text"
                 placeholder={t('nav.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full theme-bg-input border theme-border-primary rounded-lg pl-9 pr-4 py-2 text-sm theme-text-primary theme-placeholder focus:outline-none theme-ring-focus theme-border-focus transition-colors"
+                className="w-full theme-bg-input border theme-border-primary rounded-lg
+                           pl-9 pr-4 py-2 text-sm theme-text-primary theme-placeholder
+                           focus:outline-none theme-ring-focus theme-border-focus
+                           transition-colors"
               />
             </div>
           </div>
 
+          {/* Mobile (< sm) collapsible search overlay */}
+          <AnimatePresence>
+            {mobileSearchOpen && (
+              <motion.div
+                key="mobile-search"
+                ref={mobileSearchRef}
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.16, ease: 'easeOut' }}
+                className="sm:hidden absolute left-0 right-0 top-0 h-16 px-3
+                           flex items-center gap-2 z-40 backdrop-blur-md border-b"
+                style={{
+                  backgroundColor: 'var(--bg-secondary)',
+                  borderColor: 'var(--border-primary)',
+                }}
+              >
+                <div className="group relative flex-1 min-w-0">
+                  <Search
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 theme-text-muted
+                               group-focus-within:text-gold-500 transition-colors"
+                  />
+                  <input
+                    ref={mobileSearchInputRef}
+                    type="text"
+                    placeholder={t('nav.search')}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full theme-bg-input border theme-border-primary rounded-lg
+                               pl-9 pr-4 py-2 text-sm theme-text-primary theme-placeholder
+                               focus:outline-none theme-ring-focus theme-border-focus
+                               transition-colors"
+                  />
+                </div>
+                <button
+                  onClick={() => setMobileSearchOpen(false)}
+                  className="shrink-0 p-2 rounded-lg theme-text-muted
+                             hover:theme-bg-hover hover:theme-text-primary transition-colors"
+                  aria-label="Close search"
+                >
+                  <X size={18} />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Right: Theme toggle + Language switch + Import button */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-auto shrink-0">
+            {/* Mobile-only: open search overlay */}
+            <button
+              onClick={() => setMobileSearchOpen(true)}
+              className="sm:hidden flex items-center gap-1.5 rounded-lg border theme-border-primary
+                         p-2 text-xs font-medium theme-text-secondary
+                         hover:theme-border-focus hover:theme-text-primary transition-colors"
+              title={t('nav.search')}
+              aria-label={t('nav.search')}
+            >
+              <Search size={14} />
+            </button>
+
             {/* Help button */}
             <Link
               to="/help"
               className="flex items-center gap-1.5 rounded-lg border theme-border-primary
-                         px-3 py-2 text-xs font-medium theme-text-secondary
+                         p-2 lg:px-3 lg:py-2 text-xs font-medium theme-text-secondary
                          hover:theme-border-focus hover:theme-text-primary transition-colors"
               title={t('nav.help')}
             >
@@ -113,7 +211,7 @@ export default function Layout() {
             <button
               onClick={toggleTheme}
               className="flex items-center gap-1.5 rounded-lg border theme-border-primary
-                         px-3 py-2 text-xs font-medium theme-text-secondary
+                         p-2 text-xs font-medium theme-text-secondary
                          hover:theme-border-focus hover:theme-text-primary transition-colors"
               title={theme === 'dark' ? t('nav.lightMode') : t('nav.darkMode')}
             >
@@ -124,7 +222,7 @@ export default function Layout() {
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-1.5 rounded-lg border theme-border-primary
-                         px-3 py-2 text-xs font-medium theme-text-secondary
+                         p-2 sm:px-3 sm:py-2 text-xs font-medium theme-text-secondary
                          hover:theme-border-focus hover:theme-text-primary transition-colors"
               title={t('nav.language')}
             >
@@ -135,7 +233,8 @@ export default function Layout() {
             {/* Import button */}
             <Link
               to="/import"
-              className="flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-navy-950 font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-navy-950 font-medium text-sm p-2 sm:px-4 sm:py-2 rounded-lg transition-colors"
+              title={t('nav.import')}
             >
               <Plus size={16} />
               <span className="hidden sm:inline">{t('nav.import')}</span>
@@ -145,7 +244,7 @@ export default function Layout() {
             {isAdmin && (
               <Link
                 to="/data-management"
-                className="flex items-center gap-1.5 rounded-lg border theme-border-primary px-3 py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"
+                className="flex items-center gap-1.5 rounded-lg border theme-border-primary p-2 lg:px-3 lg:py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"
                 title={t('data.title')}
               >
                 <Database size={14} />
@@ -158,7 +257,7 @@ export default function Layout() {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setUserMenuOpen((v) => !v)}
-                  className="flex items-center gap-1.5 rounded-lg border theme-border-primary px-3 py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"
+                  className="flex items-center gap-1.5 rounded-lg border theme-border-primary p-2 sm:px-3 sm:py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"
                   title={user.displayName || user.username}
                 >
                   <User size={14} />
@@ -202,7 +301,7 @@ export default function Layout() {
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-1.5 rounded-lg border theme-border-primary px-3 py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"
+                className="flex items-center gap-1.5 rounded-lg border theme-border-primary p-2 sm:px-3 sm:py-2 text-xs font-medium theme-text-secondary hover:theme-border-focus hover:theme-text-primary transition-colors"
                 title={t('auth.login')}
               >
                 <LogIn size={14} />
